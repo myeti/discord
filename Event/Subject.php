@@ -6,6 +6,16 @@ interface Subject
 {
 
     /**
+     * Define value expectation
+     *
+     * @param string $event
+     * @param mixed $listener
+     *
+     * @return mixed
+     */
+    public function expect($event, $expectation);
+
+    /**
      * Attach callable to a specific event
      *
      * @param string $event
@@ -19,11 +29,11 @@ interface Subject
     /**
      * Attach listener to subject
      *
-     * @param Listener $listener
+     * @param object $listener
      *
      * @return mixed
      */
-    public function attach(Listener $listener);
+    public function attach($listener);
 
 
     /**

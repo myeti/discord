@@ -10,6 +10,20 @@ abstract class Delegate implements Subject
 
 
     /**
+     * Define value expectation
+     *
+     * @param string $event
+     * @param string|callable $expectation
+     *
+     * @return mixed
+     */
+    public function expect($event, $expectation)
+    {
+        return $this->channel->expect($event, $expectation);
+    }
+
+
+    /**
      * Listen event
      *
      * @param string $event
@@ -26,11 +40,11 @@ abstract class Delegate implements Subject
     /**
      * Attach listener instance
      *
-     * @param Listener $listener
+     * @param object $listener
      *
      * @return $this
      */
-    public function attach(Listener $listener)
+    public function attach($listener)
     {
         return $this->channel->attach($listener);
     }

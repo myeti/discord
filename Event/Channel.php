@@ -2,11 +2,52 @@
 
 namespace Discord\Event;
 
+use Discord\Reflector;
+
 class Channel implements Subject
 {
 
     /** @var array */
     protected $events = [];
+
+    /** @var array */
+    protected $expectations = [];
+
+
+    /**
+     * Define value expectation
+     *
+     * @param string $event
+     * @param string|callable $expectation
+     *
+     * @return mixed
+     */
+    public function expect($event, $expectation)
+    {
+        // expect class instance
+        if(!$expectation instanceof \Closure) {
+
+            // expect class
+            $data = $expectation;
+            if(is_string($expectation) and class_exists($expectation)) {
+                $expectation = function($value) use($data)
+                {
+                    return ($value instanceof $data);
+                };
+            }
+            // expect strict value
+            else {
+                $expectation = function($value) use($data)
+                {
+                    return ($value == $data);
+                };
+            }
+        }
+
+        $this->expectations[$event] = $expectation;
+
+        return $this;
+    }
 
 
     /**
@@ -32,13 +73,23 @@ class Channel implements Subject
     /**
      * Attach listener instance
      *
-     * @param Listener $listener
+     * @param object $listener
      *
      * @return $this
      */
-    public function attach(Listener $listener)
+    public function attach($listener)
     {
-        $listener->listen($this);
+        // not an object
+        if(!is_object($listener)) {
+            throw new \InvalidArgumentException('$listener param must be a valid object instance');
+        }
+
+        // scan all methods, seek for @event
+        foreach(get_class_methods($listener) as $method) {
+            if($event = Reflector\Annotations::ofMethod($listener, $method, 'event')) {
+                $this->on($event, [$listener, $method]);
+            }
+        }
 
         return $this;
     }
@@ -50,30 +101,29 @@ class Channel implements Subject
      * @param string $event
      * @param $params
      *
-     * @return int
+     * @return mixed
      */
     public function fire($event, &...$params)
     {
-        $count = 0;
-
         // event has listeners ?
         if(isset($this->events[$event])) {
-
-            // execute them
             foreach($this->events[$event] as $callable) {
 
-                // increase counter
-                $stop = call_user_func_array($callable, $params);
-                $count++;
+                // execute listener
+                $value = call_user_func_array($callable, $params);
 
-                // stop propagation ?
-                if($stop === false) {
-                    break;
+                // has expectations : stop propagation
+                if(isset($this->expectations[$event])) {
+                    $expectation = $this->expectations[$event];
+                    if($expectation($value)) {
+                        return $value;
+                    }
                 }
+
+                // reset value
+                unset($value);
             }
         }
-
-        return $count;
     }
 
 }
