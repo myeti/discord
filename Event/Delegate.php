@@ -13,13 +13,15 @@ abstract class Delegate implements Subject
      * Define value expectation
      *
      * @param string $event
-     * @param string|callable $expectation
+     * @param mixed $expectation
+     *
+     * @param bool $continue
      *
      * @return mixed
      */
-    public function expect($event, $expectation)
+    public function expect($event, $expectation, $continue = false)
     {
-        return $this->channel->expect($event, $expectation);
+        return $this->channel->expect($event, $expectation, $continue);
     }
 
 

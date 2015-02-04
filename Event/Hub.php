@@ -13,13 +13,15 @@ abstract class Hub
      * Define value expectation
      *
      * @param string $event
-     * @param string|callable $expectation
+     * @param mixed $expectation
+     *
+     * @param bool $continue
      *
      * @return mixed
      */
-    public static function expect($event, $expectation)
+    public static function expect($event, $expectation, $continue = false)
     {
-        return static::subject()->expect($event, $expectation);
+        return static::subject()->expect($event, $expectation, $continue);
     }
 
 

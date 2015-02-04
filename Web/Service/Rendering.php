@@ -2,11 +2,10 @@
 
 namespace Discord\Web\Service;
 
-use Discord\Web;
 use Discord\Http;
 use Discord\View;
 
-class Rendering extends Web\Service
+class Rendering
 {
 
     /** @var View\Viewable */
@@ -27,13 +26,17 @@ class Rendering extends Web\Service
     /**
      * Handle response rendering
      *
+     * @event kernel.response
+     *
      * @param Http\Request $request
      * @param Http\Response $response
      *
      * @return Http\Response|null
      */
-    public function after(Http\Request $request, Http\Response $response)
+    public function kernelResponse(Http\Request $request, Http\Response $response)
     {
+
+
 
     }
 

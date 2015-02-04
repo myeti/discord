@@ -9,11 +9,13 @@ interface Subject
      * Define value expectation
      *
      * @param string $event
-     * @param mixed $listener
+     * @param mixed $expectation
+     *
+     * @param bool $continue
      *
      * @return mixed
      */
-    public function expect($event, $expectation);
+    public function expect($event, $expectation, $continue = false);
 
     /**
      * Attach callable to a specific event

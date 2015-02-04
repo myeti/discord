@@ -3,39 +3,27 @@
 namespace Discord\Web;
 
 use Discord\Http;
+use Discord\Event;
 
-class Kernel implements Http\Handler
+class Kernel extends Event\Channel implements Http\Handler
 {
-
-    /** @var Service[] */
-    protected $services = [];
-
 
     /**
      * Construct with services
      *
-     * @param Service ...$services
+     * @param object ...$services
      */
-    public function __construct(Service ...$services)
+    public function __construct(...$services)
     {
+        // define event expectation
+        $this->expect('kernel.request', Http\Response::class);
+        $this->expect('kernel.error', Http\Response::class);
+        $this->expect('kernel.response', Http\Response::class, true);
+
+        // attach services
         foreach($services as $service) {
-            $this->plug($service);
+            $this->attach($service);
         }
-    }
-
-
-    /**
-     * Register service
-     *
-     * @param Service $service
-     *
-     * @return $this
-     */
-    public function plug(Service $service)
-    {
-        $this->services[] = $service;
-
-        return $this;
     }
 
 
@@ -52,12 +40,10 @@ class Kernel implements Http\Handler
         $response = null;
         try {
 
-            // execute <before> services
-            foreach($this->services as $service) {
-                $return = $service->before($request);
-                if($return instanceof Http\Response) {
-                    return $return;
-                }
+            // fire <kernel.request> event
+            $return = $this->fire('kernel.request', $request);
+            if($return instanceof Http\Response) {
+                return $return;
             }
 
             // check if resource is callable
@@ -66,20 +52,22 @@ class Kernel implements Http\Handler
             }
 
             // execute resource
-            $response = call_user_func($request->resource);
-            if(!$response instanceof Http\Response) {
-                $response = new Http\Response($response);
+            $data = call_user_func($request->resource);
+            if(!$data instanceof Http\Response) {
+                $response = new Http\Response;
+                $response->data = $data;
+            }
+            else {
+                $response = $data;
             }
 
         }
         catch(\Exception $e) {
 
-            // execute <error> services
-            foreach($this->services as $service) {
-                $return = $service->error($request, $e);
-                if($return instanceof Http\Response) {
-                    return $return;
-                }
+            // fire <kernel.error> event
+            $return = $this->fire('kernel.error', $request, $e);
+            if($return instanceof Http\Response) {
+                return $return;
             }
 
             // error not caught
@@ -87,13 +75,8 @@ class Kernel implements Http\Handler
         }
         finally {
 
-            // execute <after> services
-            foreach($this->services as $service) {
-                $return = $service->after($request, $response);
-                if($return instanceof Http\Response) {
-                    $response = $return;
-                }
-            }
+            // fire <kernel.response> event
+            $response = $this->fire('kernel.response', $request, $response);
 
             // check if the response is valid
             if(!$response instanceof Http\Response) {

@@ -18,11 +18,13 @@ class Channel implements Subject
      * Define value expectation
      *
      * @param string $event
-     * @param string|callable $expectation
+     * @param mixed $expectation
+     *
+     * @param bool $continue
      *
      * @return mixed
      */
-    public function expect($event, $expectation)
+    public function expect($event, $expectation, $continue = false)
     {
         // expect class instance
         if(!$expectation instanceof \Closure) {
@@ -44,7 +46,7 @@ class Channel implements Subject
             }
         }
 
-        $this->expectations[$event] = $expectation;
+        $this->expectations[$event] = [$expectation, $continue];
 
         return $this;
     }
@@ -105,25 +107,34 @@ class Channel implements Subject
      */
     public function fire($event, &...$params)
     {
+        // init return value
+        $value = null;
+
         // event has listeners ?
         if(isset($this->events[$event])) {
             foreach($this->events[$event] as $callable) {
 
                 // execute listener
-                $value = call_user_func_array($callable, $params);
+                $return = call_user_func_array($callable, $params);
 
-                // has expectations : stop propagation
+                // has expectations ?
                 if(isset($this->expectations[$event])) {
-                    $expectation = $this->expectations[$event];
-                    if($expectation($value)) {
-                        return $value;
+                    list($expectation, $continue) = $this->expectations[$event];
+                    if($expectation($return)) {
+
+                        // stop propagation
+                        if(!$continue) {
+                            return $return;
+                        }
+
+                        // continue
+                        $value = $return;
                     }
                 }
-
-                // reset value
-                unset($value);
             }
         }
+
+        return $value;
     }
 
 }

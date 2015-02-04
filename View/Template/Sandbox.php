@@ -165,7 +165,7 @@ abstract class Sandbox
         // display file
         require $this->template;
 
-        // stop stream cpature
+        // stop stream capture
         $content = ob_get_clean();
 
         // render layout

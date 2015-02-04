@@ -2,12 +2,11 @@
 
 namespace Discord\Web\Service;
 
-use Discord\Web;
 use Discord\Http;
 use Discord\Router;
 use Discord\Reflector;
 
-class Routing extends Web\Service
+class Routing
 {
 
     /** @var Router\Routable */
@@ -28,19 +27,21 @@ class Routing extends Web\Service
     /**
      * Handle request resolution
      *
+     * @event kernel.request
+     *
      * @param Http\Request $request
      *
-     * @return Http\Response|null
+     * @return Http\Response
      * @throws Http\Exception
      */
-    public function before(Http\Request &$request)
+    public function kernelRequest(Http\Request &$request)
     {
         // init instances
         $resource = $request->resource;
         $route = null;
 
-        // resource already specified
-        if(!$resource or !$resource->callable) {
+        // routing needed
+        if(!$resource) {
 
             // find route
             $route = $this->router->find($request->url->query);
@@ -49,14 +50,24 @@ class Routing extends Web\Service
             if(!$route) {
                 throw new Http\Exception(404);
             }
+        }
 
-            // resolve resource
+        // resource needs resolving
+        if(!$resource instanceof Reflector\Resource) {
             $resource = Reflector\Resolver::resolve($route->resource);
             $resource->params = $route->params;
         }
 
-        // inject dependencies
-        // @todo
+        // resource allowed ?
+        if(!isset($resource->annotations['auth'])) {
+            $resource->annotations['auth'] = 0;
+        }
+        // 403
+        elseif(Http\Auth::rank() < $resource->annotations['auth']) {
+            throw new Http\Exception(403);
+        }
+
+        // @todo inject dependencies
 
         // update request
         $request->resource = $resource;
