@@ -35,9 +35,15 @@ class Rendering
      */
     public function kernelResponse(Http\Request $request, Http\Response $response)
     {
+        // rendering asked
+        if(!empty($request->resource->annotations['render'])) {
 
+            // compile template
+            $template = $request->resource->annotations['render'];
+            $response->content = $this->engine->render($template, $response->data);
 
-
+            return $response;
+        }
     }
 
 }

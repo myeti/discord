@@ -26,7 +26,7 @@ class Request
     /** @var Request\Accept */
     public $accept;
 
-    /** @var Request\Resource */
+    /** @var callable */
     public $resource;
 
     /** @var string */
@@ -263,32 +263,6 @@ class Request
         $request->agent = $request->server('HTTP_USER_AGENT');
         $request->ip = $request->server('REMOTE_ADDR');
         $request->time = $request->server('REQUEST_TIME');
-
-        return $request;
-    }
-
-
-    /**
-     * Create request for resource
-     *
-     * @param callable $resource
-     * @param array $params
-     * @param Request $from
-     *
-     * @return static
-     *
-     */
-    public static function resource($resource, array $params = [], Request $from = null)
-    {
-        if($from) {
-            $request = clone $from;
-        }
-        else {
-            $url = Request\Url::current();
-            $request = new static($url);
-        }
-
-        $request->resource = new Request\Resource($resource, $params);
 
         return $request;
     }

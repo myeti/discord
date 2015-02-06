@@ -114,6 +114,11 @@ class Channel implements Subject
         if(isset($this->events[$event])) {
             foreach($this->events[$event] as $callable) {
 
+                // execute before filter
+                if($event != '*') {
+                    $this->fire('*', $event, $callable, ...$param);
+                }
+
                 // execute listener
                 $return = call_user_func_array($callable, $params);
 

@@ -10,6 +10,18 @@ abstract class Injector
 
 
     /**
+     * Factory exists (or not)
+     *
+     * @param string $key
+     * @return bool
+     */
+    public static function has($key)
+    {
+        return isset(static::$factories[$key]);
+    }
+
+
+    /**
      * Store instance
      *
      * @param string $key

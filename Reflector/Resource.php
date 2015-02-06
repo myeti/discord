@@ -11,7 +11,7 @@ class Resource
     /** @var callable */
     public $callable;
 
-    /** @var \Reflector */
+    /** @var \ReflectionFunctionAbstract */
     public $reflector;
 
     /** @var array */

@@ -47,22 +47,31 @@ class Kernel extends Event\Channel implements Http\Handler
             }
 
             // check if resource is callable
-            if(!$request->resource instanceof Http\Request\Resource) {
+            if(!is_callable($request->resource)) {
                 throw new \RuntimeException('Request::resource must be a valid callable');
             }
 
             // execute resource
-            $data = call_user_func($request->resource);
-            if(!$data instanceof Http\Response) {
+            $return = call_user_func($request->resource);
+            if(!$return instanceof Http\Response) {
                 $response = new Http\Response;
-                $response->data = $data;
+                $response->data = $return;
             }
             else {
-                $response = $data;
+                $response = $return;
             }
 
         }
         catch(\Exception $e) {
+
+            // fire <code> event
+            if($code = $e->getCode()) {
+                $this->expect($code, Http\Response::class);
+                $return = $this->fire($code, $request);
+                if($return instanceof Http\Response) {
+                    return $return;
+                }
+            }
 
             // fire <kernel.error> event
             $return = $this->fire('kernel.error', $request, $e);

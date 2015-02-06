@@ -67,8 +67,6 @@ class Routing
             throw new Http\Exception(403);
         }
 
-        // @todo inject dependencies
-
         // update request
         $request->resource = $resource;
         $request->set('route', $route);

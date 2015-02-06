@@ -26,7 +26,6 @@ abstract class Resolver
      * @param $input
      *
      * @throws Resolver\ResourceNotValid
-     *
      * @return Resource
      */
     public static function resolve($input)
@@ -83,6 +82,7 @@ abstract class Resolver
                 // create resource
                 $resource = new Resource($action, [], $annotations);
                 $resource->origin = $input;
+                $resource->reflector = $method;
 
                 return $resource;
             }
@@ -128,6 +128,7 @@ abstract class Resolver
                 // create resource
                 $resource = new Resource($action, [], $annotations);
                 $resource->origin = $input;
+                $resource->reflector = $method;
 
                 return $resource;
             }
@@ -167,6 +168,7 @@ abstract class Resolver
             // create resource
             $resource = new Resource($input, [], $annotations);
             $resource->origin = $input;
+            $resource->reflector = new \ReflectionFunction($input);
 
             return $resource;
         }
