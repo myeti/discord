@@ -69,3 +69,18 @@ $channel->on('user.create', function()
 
 $user = $channel->fire('user.create');
 ```
+
+**Événements globaux** : pour plus de souplesse.
+
+```php
+<?php
+
+use Discord\Event;
+
+Event\Hub::on('greet', function($name)
+{
+    echo 'Hello ', $name, ' !';
+});
+
+Event\Hub::fire('greet', 'you'); // Hello you !
+```
