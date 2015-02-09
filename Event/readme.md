@@ -1,4 +1,4 @@
-## Event component
+## Discord\Event
 
 Gestion des événements en PHP, essence même du framework Discord.
 
