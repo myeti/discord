@@ -1,12 +1,9 @@
 <?php
 
-namespace Discord\Http;
+namespace Discord\Persist;
 
 abstract class Session
 {
-
-    /** @var Session\Provider */
-    protected static $provider;
 
 
     /**
@@ -16,7 +13,7 @@ abstract class Session
      *
      * @return bool
      */
-    public function has($key)
+    public static function has($key)
     {
         return static::provider()->has($key);
     }
@@ -29,7 +26,7 @@ abstract class Session
      *
      * @return mixed
      */
-    public function get($key)
+    public static function get($key)
     {
         return static::provider()->get($key);
     }
@@ -43,23 +40,9 @@ abstract class Session
      *
      * @return mixed
      */
-    public function set($key, $value)
+    public static function set($key, $value)
     {
         return static::provider()->set($key, $value);
-    }
-
-
-    /**
-     * Write value in session
-     *
-     * @param string $key
-     * @param $value
-     *
-     * @return mixed
-     */
-    public function flash($key, $value)
-    {
-        return static::provider()->flash($key, $value);
     }
 
 
@@ -69,7 +52,7 @@ abstract class Session
      *
      * @return mixed
      */
-    public function drop($key)
+    public static function drop($key)
     {
         return static::provider()->drop($key);
     }
@@ -80,7 +63,7 @@ abstract class Session
      *
      * @return mixed
      */
-    public function wipe()
+    public static function wipe()
     {
         return static::provider()->wipe();
     }
@@ -93,16 +76,18 @@ abstract class Session
      *
      * @return Session\Provider
      */
-    public function provider(Session\Provider $provider = null)
+    public static function provider(Session\Provider $provider = null)
     {
+        static $instance;
+
         if($provider) {
-            static::$provider = $provider;
+            $instance = $provider;
         }
-        elseif(!static::$provider) {
-            static::$provider = new Session\Native('__DATA__');
+        elseif(!$instance) {
+            $instance = new Session\Native('__DATA__');
         }
 
-        return static::$provider;
+        return $instance;
     }
 
 }

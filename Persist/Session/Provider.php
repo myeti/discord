@@ -1,6 +1,6 @@
 <?php
 
-namespace Discord\Http\Session;
+namespace Discord\Persist\Session;
 
 interface Provider
 {
@@ -33,17 +33,6 @@ interface Provider
      * @return mixed
      */
     public function set($key, $value);
-
-
-    /**
-     * Write value in session once
-     *
-     * @param string $key
-     * @param $value
-     *
-     * @return mixed
-     */
-    public function flash($key, $value);
 
 
     /**

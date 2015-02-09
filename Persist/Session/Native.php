@@ -1,13 +1,11 @@
 <?php
 
-namespace Discord\Http\Session;
+namespace Discord\Persist\Session;
 
-use Discord\Http\Session;
+use Discord\Persist\Session;
 
 class Native implements Session\Provider
 {
-
-    const FLASH_KEY = '__FLASHED__';
 
     /** @var array */
     protected $data = [];
@@ -65,15 +63,7 @@ class Native implements Session\Provider
      */
     public function get($key)
     {
-        if($this->has($key)) {
-            $value = $this->data[$key];
-            if($this->has($key . static::FLASH_KEY)) {
-                $this->drop($key)->drop($key . static::FLASH_KEY);
-            }
-            return $value;
-        }
-
-        return null;
+        return isset($this->data[$key]) ? $this->data[$key] : null;
     }
 
 
@@ -90,22 +80,6 @@ class Native implements Session\Provider
         $this->data[$key] = $value;
 
         return $this;
-    }
-
-
-    /**
-     * Write value in session once
-     *
-     * @param string $key
-     * @param $value
-     *
-     * @return mixed
-     */
-    public function flash($key, $value)
-    {
-        $this->set($key . static::FLASH_KEY, true);
-
-        return $this->set($key, $value);
     }
 
 

@@ -1,13 +1,9 @@
 <?php
 
-namespace Discord\Http;
+namespace Discord\Persist;
 
 abstract class Auth
 {
-
-    /** @var Session\Provider */
-    protected static $provider;
-
 
     /**
      * Log user in
@@ -63,14 +59,16 @@ abstract class Auth
      */
     public static function provider(Session\Provider $provider = null)
     {
+        static $instance;
+
         if($provider) {
-            static::$provider = $provider;
+            $instance = $provider;
         }
-        elseif(!static::$provider) {
-            static::$provider = new Session\Native('__AUTH__');
+        elseif(!$instance) {
+            $instance = new Session\Native('__AUTH__');
         }
 
-        return static::$provider;
+        return $instance;
     }
 
 }
