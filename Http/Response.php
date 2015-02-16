@@ -182,20 +182,6 @@ class Response
 
 
     /**
-     * Add no-cache headers
-     *
-     * @return $this
-     */
-    public function toJson()
-    {
-        $this->header('Cache-Control', 'no-cache, must-revalidate');
-        $this->header('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
-
-        return $this;
-    }
-
-
-    /**
      * Response already sent ?
      *
      * @return bool

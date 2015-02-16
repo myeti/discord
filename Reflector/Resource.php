@@ -6,19 +6,16 @@ class Resource
 {
 
     /** @var callable */
-    public $origin;
-
-    /** @var callable */
     public $callable;
-
-    /** @var \ReflectionFunctionAbstract */
-    public $reflector;
-
-    /** @var array */
-    public $annotations = [];
 
     /** @var array */
     public $params = [];
+
+    /** @var array */
+    public $context = [];
+
+    /** @var \ReflectionFunctionAbstract */
+    public $reflector;
 
 
     /**
@@ -26,13 +23,13 @@ class Resource
      *
      * @param callable $callable
      * @param array $params
-     * @param array $annotations
+     * @param array $context
      */
-    public function __construct(callable $callable, array $params = [], array $annotations = [])
+    public function __construct(callable $callable, array $params = [], array $context = [])
     {
         $this->callable = $callable;
-        $this->annotations = $annotations;
         $this->params = $params;
+        $this->context = $context;
     }
 
 

@@ -9,26 +9,47 @@ class Kernel extends Event\Channel implements Http\Handler
 {
 
     /**
-     * Construct with services
+     * Construct a web kernel with service listeners
      *
      * @param object ...$services
      */
     public function __construct(...$services)
+    {
+        // attach services
+        foreach($services as $service) {
+            $this->attach($service);
+        }
+
+        // setup kernel
+        $this->setup();
+    }
+
+
+    /**
+     * Setup kernel
+     *
+     * Define event values expectation
+     * and trigger 'kernel.setup' event.
+     */
+    protected function setup()
     {
         // define event expectation
         $this->expect('kernel.request', Http\Response::class);
         $this->expect('kernel.error', Http\Response::class);
         $this->expect('kernel.response', Http\Response::class, true);
 
-        // attach services
-        foreach($services as $service) {
-            $this->attach($service);
-        }
+        // delegated setup
+        $this->fire('kernel.setup', $this);
     }
 
 
     /**
-     * Handle request to create response
+     * Handle request
+     *
+     * Resolve the request resource, trigger 'kernel.resolve' event.
+     * Execute the resource, throw \RuntimeException is invalid callable.
+     * Intercept error, trigger '{code}' event or 'kernel.error' event.
+     * Respond by creating a response object, trigger 'kernel.respond' event.
      *
      * @param Http\Request $request
      *
@@ -37,107 +58,167 @@ class Kernel extends Event\Channel implements Http\Handler
      */
     public function handle(Http\Request $request)
     {
-        $response = null;
+        $data = null;
         try {
 
-            // fire <kernel.request> event
-            $return = $this->fire('kernel.request', $request);
-            if($return instanceof Http\Response) {
-                return $return;
+            // resolve request
+            $response = $this->resolve($request);
+            if($response instanceof Http\Response) {
+                return $this->finish($request, $response);
             }
 
-            // check if resource is callable
+            // invalid request
             if(!is_callable($request->resource)) {
-                throw new \RuntimeException('Request::resource must be a valid callable');
+                throw new Kernel\InvalidRequest;
             }
 
             // execute resource
-            $return = call_user_func($request->resource);
-            if(!$return instanceof Http\Response) {
-                $response = new Http\Response;
-                $response->data = $return;
+            $data = call_user_func($request->resource);
+            if($data instanceof Http\Response) {
+                return $this->finish($request, $data);
             }
-            else {
-                $response = $return;
-            }
-
         }
         catch(\Exception $e) {
 
-            // fire <code> event
-            if($code = $e->getCode()) {
-                $this->expect($code, Http\Response::class);
-                $return = $this->fire($code, $request);
-                if($return instanceof Http\Response) {
-                    return $return;
-                }
+            // intercept error and dispatch as event
+            $response = $this->intercept($request, $e);
+            if($response instanceof Http\Response) {
+                return $this->finish($request, $response);
             }
-
-            // fire <kernel.error> event
-            $return = $this->fire('kernel.error', $request, $e);
-            if($return instanceof Http\Response) {
-                return $return;
-            }
-
-            // error not caught
-            throw $e;
         }
         finally {
 
-            // fire <kernel.response> event
-            $response = $this->fire('kernel.response', $request, $response);
+            // create response
+            $response = $this->respond($request, $data);
 
-            // check if the response is valid
-            if(!$response instanceof Http\Response) {
-                throw new \RuntimeException('Response must be a valid instance');
+            // invalid response
+            if(!is_callable($request->resource)) {
+                throw new Kernel\InvalidRequest;
             }
 
+            return $this->finish($request, $response);
+        }
+    }
+
+
+    /**
+     * Resolve request
+     *
+     * Can return a response object, process halt.
+     * If not, must set a valid callable resource.
+     *
+     * @param Http\Request $request
+     *
+     * @return Http\Response
+     *
+     * @throw \RuntimeException
+     */
+    protected function resolve(Http\Request $request)
+    {
+        // fire <kernel.resolve> event
+        $response = $this->fire('kernel.resolve', $request);
+        if($response instanceof Http\Response) {
             return $response;
         }
+
+        // check if resource is a valid callable
+        if(!is_callable($request->resource)) {
+            throw new \RuntimeException('Request::resource must be a valid callable');
+        }
     }
 
 
     /**
-     * Inject user url
+     * Intercept error
      *
-     * @param string $url
+     * First dispatch to the code event specified (ex: '404').
+     * If not, dispatch to global 'kernel.error' event.
      *
-     * @param string $method
-     * @param Http\Request $from
+     * Can return a response object : process halt.
+     *
+     * @param Http\Request $request
+     * @param \Exception $e
      *
      * @return Http\Response
+     *
      * @throws \Exception
      */
-    public function to($url, $method = 'GET', Http\Request $from = null)
+    protected function intercept(Http\Request $request, \Exception $e)
     {
-        if($from) {
-            $request = $from;
-            $request->url = new Http\Request\Url($url);
-            $request->method = $method;
-        }
-        else {
-            $request = new Http\Request($url, $method);
+        // fire <code> event
+        if($code = $e->getCode()) {
+            $this->expect($code, Http\Response::class);
+            $response = $this->fire($code, $request);
+            if($response instanceof Http\Response) {
+                return $response;
+            }
         }
 
-        return $this->handle($request);
+        // fire <kernel.error> event
+        $response = $this->fire('kernel.error', $request, $e);
+        if($response instanceof Http\Response) {
+            return $response;
+        }
+
+        // error not caught
+        throw $e;
     }
 
 
     /**
-     * Inject user resource
+     * Create response using data from resource
      *
-     * @param string $resource
-     * @param Http\Request $from
+     * Must return a valid response object, trigger 'kernel.respond' event
+     *
+     * @param Http\Request $request
+     * @param $data
      *
      * @return Http\Response
-     * @throws \Exception
      */
-    public function forward($resource, Http\Request $from = null)
+    protected function respond(Http\Request $request, $data)
     {
-        $request = $from ?: new Http\Request(null);
-        $request->resource = $resource;
+        // fire <kernel.respond> event
+        $response = $this->fire('kernel.respond', $request, $data);
 
-        return $this->handle($request);
+        // check if the response is valid
+        if(!$response instanceof Http\Response) {
+            throw new \RuntimeException('Response must be a valid instance');
+        }
+
+        return $response;
+    }
+
+
+    /**
+     * Filter output response
+     *
+     * Nothing impacted.
+     *
+     * @param Http\Request $request
+     * @param Http\Response $response
+     *
+     * @return Http\Response
+     */
+    protected function finish(Http\Request $request, Http\Response $response)
+    {
+        $this->fire('kernel.finish', $request, $response);
+
+        return $response;
+    }
+
+
+    /**
+     * Handle default request
+     * and send response
+     *
+     * @return bool
+     */
+    public function run()
+    {
+        $request = Http\Request::globals();
+        $response = $this->handle($request);
+
+        return $response->send();
     }
 
 }

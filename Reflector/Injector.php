@@ -93,4 +93,36 @@ abstract class Injector
         throw new Injector\DependencyNotFound;
     }
 
+
+    /**
+     * Inject dependencies in resource params
+     *
+     * @param Resource $resource
+     *
+     * @return \Discord\Reflector\Resource
+     */
+    public static function inject(Resource $resource)
+    {
+        // init ordered params
+        $ordered = [];
+
+        // reflect on params
+        foreach($resource->reflector->getParameters() as $parameter) {
+
+            // set value
+            $key = $parameter->getName();
+            $ordered[$key] = isset($resource->params[$key]) ? $resource->params[$key] : null;
+
+            // inject dependencies
+            if($class = $parameter->getClass() and Injector::has($class)) {
+                $ordered[$key] = Injector::get($class, $ordered[$key]);
+            }
+        }
+
+        // update params
+        $resource->params = $ordered;
+
+        return $resource;
+    }
+
 }

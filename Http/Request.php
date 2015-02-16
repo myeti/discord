@@ -78,7 +78,6 @@ class Request
         $this->method = $method;
 
         $this->accept = new Request\Accept([], null, null, null);
-        $this->resource = new Request\Resource(null);
     }
 
 

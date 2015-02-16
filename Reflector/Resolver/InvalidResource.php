@@ -2,7 +2,7 @@
 
 namespace Discord\Reflector\Resolver;
 
-class ResourceNotValid extends \Exception
+class InvalidResource extends \Exception
 {
 
 } 

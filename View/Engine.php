@@ -6,10 +6,10 @@ class Engine implements Viewable
 {
 
     /** @var string */
-    protected $directory;
+    public $directory;
 
     /** @var string */
-    protected $extension = '.php';
+    public $extension = '.php';
 
     /** @var array */
     protected $vars = [];

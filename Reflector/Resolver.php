@@ -25,7 +25,7 @@ abstract class Resolver
      *
      * @param $input
      *
-     * @throws Resolver\ResourceNotValid
+     * @throws Resolver\InvalidResource
      * @return Resource
      */
     public static function resolve($input)
@@ -45,7 +45,7 @@ abstract class Resolver
             }
         }
 
-        throw new Resolver\ResourceNotValid;
+        throw new Resolver\InvalidResource;
     }
 
 
@@ -122,7 +122,7 @@ abstract class Resolver
 
                 // create object
                 if(!is_object($action[0])) {
-                    $action[0] = Injector::make($action[0]);
+                    $action[0] = Injector::get($action[0]);
                 }
 
                 // create resource

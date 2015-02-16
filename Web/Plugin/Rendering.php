@@ -1,8 +1,9 @@
 <?php
 
-namespace Discord\Web\Service;
+namespace Discord\Web\Plugin;
 
 use Discord\Http;
+use Discord\Web;
 use Discord\View;
 
 class Rendering
@@ -29,20 +30,18 @@ class Rendering
      * @event kernel.response
      *
      * @param Http\Request $request
-     * @param Http\Response $response
+     * @param $data
      *
      * @return Http\Response|null
      */
-    public function kernelResponse(Http\Request $request, Http\Response $response)
+    public function respond(Http\Request $request, $data)
     {
-        // rendering asked
-        if(!empty($request->resource->annotations['render'])) {
+        // view response no compiled
+        if(!empty($request->resource->context['render'])) {
+            $template = $request->resource->context['render'];
+            $content = $this->engine->render($template, $data);
 
-            // compile template
-            $template = $request->resource->annotations['render'];
-            $response->content = $this->engine->render($template, $response->data);
-
-            return $response;
+            return new Http\Response($content);
         }
     }
 

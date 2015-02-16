@@ -6,7 +6,7 @@ class Html extends Engine
 {
 
     /** @var string */
-    protected $assets = '/';
+    public $assets = '/';
 
 
     /**

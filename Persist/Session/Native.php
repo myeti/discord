@@ -2,10 +2,13 @@
 
 namespace Discord\Persist\Session;
 
-use Discord\Persist\Session;
+use Discord\Box\Dot;
 
-class Native implements Session\Provider
+class Native implements Provider
 {
+
+    /** @var string */
+    protected $name;
 
     /** @var array */
     protected $data = [];
@@ -28,8 +31,9 @@ class Native implements Session\Provider
             session_start();
         }
 
-        // link to php session
+        // link to global session
         if($name) {
+            $this->name = $name;
             if(!isset($_SESSION[$name])) {
                 $_SESSION[$name] = [];
             }
@@ -50,7 +54,7 @@ class Native implements Session\Provider
      */
     public function has($key)
     {
-        return isset($this->data[$key]);
+        return Dot::has($this->data, $key);
     }
 
 
@@ -63,7 +67,19 @@ class Native implements Session\Provider
      */
     public function get($key)
     {
-        return isset($this->data[$key]) ? $this->data[$key] : null;
+        if($this->has($key)) {
+
+            // get stored value
+            $value = Dot::get($this->data, $key);
+
+            // unserialize non-scalar value
+            $unserialized = @unserialize($value);
+            if($value === 'b:o;' or $unserialized !== false) {
+                $value = $unserialized;
+            }
+
+            return $value;
+        }
     }
 
 
@@ -77,7 +93,12 @@ class Native implements Session\Provider
      */
     public function set($key, $value)
     {
-        $this->data[$key] = $value;
+        // serialize non-scalar value
+        if(!is_scalar($value)) {
+            $value = serialize($value);
+        }
+
+        Dot::set($this->data, $key, $value);
 
         return $this;
     }
@@ -93,7 +114,7 @@ class Native implements Session\Provider
     public function drop($key)
     {
         if($this->has($key)) {
-            unset($this->data[$key]);
+            Dot::drop($this->data, $key);
         }
 
         return $this;

@@ -7,19 +7,23 @@ use Discord\Router;
 class Api extends Kernel
 {
 
+    /** @var Router\Urls */
+    public $router;
+
+
     /**
      * Construct with built-in services
      *
      * @param array $routes
      */
-    public function __construct(array $routes)
+    public function __construct($views, array $routes = [])
     {
-        $routing = new Service\Routing(new Router\Urls($routes));
-        $injection = new Service\Injection;
-        $jsoning = new Service\Jsoning;
+        $this->router = new Router\Urls($routes);
 
-        parent::__construct($routing, $injection, $jsoning);
+        $routing = new Plugin\Resolving($this->router);
+        $jsoning = new Plugin\Jsoning;
+
+        parent::__construct($routing, $jsoning);
     }
-
 
 }
