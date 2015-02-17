@@ -1,8 +1,8 @@
 ## Discord\Event
 
-Gestion des événements en PHP, essence même du framework Discord.
+Gestionnaire d'évenements.
 
-**Écoute d'un événement** via un simple callback.
+### Utilisation
 
 ```php
 <?php
@@ -14,9 +14,12 @@ $channel->on('greet', function($name)
 {
     echo 'Hello ', $name, ' !';
 });
+
+$channel->fire('greet', 'you'); // Hello you !
 ```
 
-**Écoute d'un événement** via annotations dans un objet.
+Il est possible d'attacher des objets en tant qu'écouteurs.
+Les méthodes ayant le meta-tag `@event` écouteront un évenement spécifique.
 
 ```php
 <?php
@@ -38,21 +41,12 @@ $channel = new Event\Channel;
 $channel->attach(new Listener);
 ```
 
-Vous pouvez attacher autant de callback ou d'objet que vous voulez.
+### Valeur de retour
 
-**Déclenchement d'un événement** : tous les callbacks seront éxecutés.
+Il est possible de définir une valeur ou type de valeur attendue.
+Lors de l'acquisition de cette valeur, l'événement est stoppé, sauf si `true` est passé en 3e paramètre.
 
-```php
-<?php
-
-$channel->fire('greet', 'you'); // Hello you !
-```
-
-**Définition d'une valeur de retour** : si un callback retourne la valeur attendue (instance, bool, string),
-elle sera également retournée à l'utilisateur.
-
-Dans le cas où plusieurs callback retourne la valeur attendue, seul le dernier est pris en compte.
-Si vous passez le 3e paramètre à `true`, l'éxecution s'arrète au 1e qui retournera la valeur attendue.
+#### Acquisition d'une classe
 
 ```php
 <?php
@@ -70,7 +64,24 @@ $channel->on('user.create', function()
 $user = $channel->fire('user.create');
 ```
 
-**Événements globaux** : pour plus de souplesse.
+#### Acquisition d'autres valeurs
+
+```php
+<?php
+
+$channel->expect('foo', true);
+$channel->expect('foo', false);
+$channel->expect('foo', 'some string');
+$channel->expect('foo', 50);
+$channel->expect('foo', function($value)
+{
+    return is_something($value);
+});
+```
+
+### Hub : évenements globaux
+
+Gestion statique, pour plus de souplesse.
 
 ```php
 <?php
