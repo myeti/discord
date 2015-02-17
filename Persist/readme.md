@@ -27,7 +27,7 @@ Le provider natif utilise la *dot notation* qui permet de parcourir horizontalem
 use Discord\Persist\Session;
 
 Session::set('foo', [
-    'bar => 'baz'
+    'bar' => 'baz'
 ]);
 
 $foo = Session::get('foo.bar'); // baz
@@ -36,7 +36,7 @@ $foo = Session::get('foo.bar'); // baz
 
 ### Message flash
 
-L'utilisation est la même que `Session`, à la différence que les messages sont consommés :
+L'utilisation est la même que `Session`, les messages sont cependant consommés :
 
 ```php
 <?php
@@ -71,11 +71,11 @@ Auth::logout();
 
 ```
 
-### Implementer son système de session
+### Implémenter son système de session
 
-Ces 3 classes `Session`, `Flash` et `Auth` utilise une instance `Session\Native`.
-Vous pouvez cependant implémenter la votre en utilisant l'interface `Session\Provider`
-et de passer l'instance via la méthode `::provider()` :
+Ces 3 classes `Session`, `Flash` et `Auth` utilisent des instances `Session\Native`.
+Vous pouvez cependant implémentez la votre en utilisant l'interface `Session\Provider`
+et en passant l'instance via la méthode `::provider()` :
 
 ```php
 <?php
