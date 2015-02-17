@@ -46,7 +46,7 @@ $channel->attach(new Listener);
 Il est possible de définir une valeur ou type de valeur attendue.
 Lors de l'acquisition de cette valeur, l'événement est stoppé, sauf si `true` est passé en 3e paramètre.
 
-##### Acquisition d'une classe
+#### Acquisition d'une classe
 
 ```php
 <?php
@@ -64,7 +64,7 @@ $channel->on('user.create', function()
 $user = $channel->fire('user.create');
 ```
 
-##### Acquisition d'autres valeurs
+#### Acquisition d'autres valeurs
 
 ```php
 <?php
@@ -75,9 +75,9 @@ $channel->expect('foo', 'some string');
 $channel->expect('foo', 50);
 ```
 
-##### Acquisition par callback
+#### Acquisition par callback
 
-Le callback reçoit la valeur en argument, s'il retourne `true`, la valeur est retournée.
+Le callback reçoit la vleur en argument, s'il retourne `true`, la valeur est retournée.
 
 ```php
 <?php
