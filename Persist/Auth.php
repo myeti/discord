@@ -13,6 +13,7 @@ abstract class Auth
      */
     public static function login($rank = 1, $user = null)
     {
+        static::provider()->set('logged', true);
         static::provider()->set('rank', $rank);
         static::provider()->set('user', $user);
     }
@@ -24,6 +25,17 @@ abstract class Auth
     public static function logout()
     {
         static::provider()->wipe();
+    }
+
+
+    /**
+     * Log user out
+     *
+     * @return int
+     */
+    public static function logged()
+    {
+        return static::provider()->get('logged') ?: false;
     }
 
 
