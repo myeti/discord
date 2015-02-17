@@ -73,6 +73,15 @@ $channel->expect('foo', true);
 $channel->expect('foo', false);
 $channel->expect('foo', 'some string');
 $channel->expect('foo', 50);
+```
+
+#### Acquisition par callback
+
+Le callback reçoit la vleur en argument, s'il retourne `true`, la valeur est retournée.
+
+```php
+<?php
+
 $channel->expect('foo', function($value)
 {
     return is_something($value);
