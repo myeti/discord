@@ -4,8 +4,6 @@ namespace Discord\Http\Request;
 
 class Url
 {
-    const PATH_INFO = 1;
-    const QUERY_STRING = 2;
 
     /** @var string */
     public $scheme;
@@ -161,17 +159,16 @@ class Url
     /**
      * Generate url from $_SERVER
      *
-     * @param int $strategy
+     * @param string $base
      *
      * @return static
      */
-    public static function current($strategy = self::PATH_INFO)
+    public static function current($base = null)
     {
         // default
         $url = '/';
-        $base = null;
 
-        // common
+        // resolve host and scheme from HTTP_HOST and REQUEST_SCHEME
         if(isset($_SERVER['HTTP_HOST'])) {
             $url = $_SERVER['HTTP_HOST'] . $url;
             if(isset($_SERVER['REQUEST_SCHEME'])) {
@@ -179,7 +176,7 @@ class Url
             }
         }
 
-        // query
+        // resolve query from REQUEST_URI
         $query = null;
         if(isset($_SERVER['REQUEST_URI'])) {
             $query = ltrim($_SERVER['REQUEST_URI'], '/');
@@ -189,18 +186,19 @@ class Url
 
         // clean query
         $query = explode('?', $query)[0];
-        $base = $query;
+        $query = '/' . ltrim($query, '/');
 
-        // resolve base from query_string : index.php?query/string
-        if($strategy == self::QUERY_STRING and !empty($_SERVER['QUERY_STRING'])) {
-            $query_string = ltrim($_SERVER['QUERY_STRING'], '/');
-            $base = substr($query, 0, -strlen($query_string));
-            unset($_GET[$_SERVER['QUERY_STRING']]);
-        }
-        // resolve base from path_info : index.php/path/info
-        elseif(!empty($_SERVER['PATH_INFO'])) {
-            $path_info = ltrim($_SERVER['PATH_INFO'], '/');
-            $base = substr($query, 0, -strlen($path_info));
+        // resolve base from SCRIPT_NAME
+        if(!$base) {
+            if(isset($_SERVER['SCRIPT_NAME']) and $script = dirname($_SERVER['SCRIPT_NAME'])) {
+                while($script != '/') {
+                    if(strncmp($query, $script, strlen($script)) === 0) {
+                        $base = $script;
+                        break;
+                    }
+                    $script = dirname($script);
+                }
+            }
         }
 
         return new static($url, $base);
