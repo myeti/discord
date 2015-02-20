@@ -30,6 +30,7 @@
         "discord/reflector": "self.version",
         "discord/router": "self.version",
         "discord/view": "self.version",
+        "discord/orm": "self.version",
         "discord/web": "self.version"
     },
     "require": {
