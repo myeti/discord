@@ -220,13 +220,13 @@ class Request
     /**
      * Create from global environment
      *
-     * @param int $urlStrategy
+     * @param string $base
      *
      * @return static
      */
-    public static function globals($urlStrategy = Request\Url::PATH_INFO)
+    public static function globals($base = null)
     {
-        $url = Request\Url::current($urlStrategy);
+        $url = Request\Url::current($base);
 
         $request = new static($url);
         $request->server = &$_SERVER;
@@ -235,7 +235,6 @@ class Request
         $request->params = &$_GET;
         $request->cookies = &$_COOKIE;
 
-        $request->code = @http_response_code();
         $request->accept = Request\Accept::from(
             $request->server('HTTP_ACCEPT'),
             $request->server('HTTP_ACCEPT_LANGUAGE'),
@@ -243,7 +242,6 @@ class Request
             $request->server('HTTP_ACCEPT_CHARSET')
         );
         $request->method = $request->server('REQUEST_METHOD');
-        $request->body = @http_get_request_body();
         $request->secure = ($request->server('HTTPS') == 'on');
         $request->ajax = $request->server('HTTP_X_REQUESTED_WITH')
             && strtolower($request->server('HTTP_X_REQUESTED_WITH')) == 'xmlhttprequest';
@@ -251,6 +249,12 @@ class Request
         $request->path = dirname($request->server('SCRIPT_FILENAME'));
         $request->path = rtrim($request->path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
+        if(function_exists('http_response_code')) {
+            $request->code = http_response_code();
+        }
+        if(function_exists('http_get_request_body')) {
+            $request->body = http_get_request_body();
+        }
         if(function_exists('apache_request_headers')) {
             $request->header = apache_request_headers();
         }
