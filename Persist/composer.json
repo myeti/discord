@@ -1,0 +1,23 @@
+{
+    "name": "discord/persist",
+    "type": "library",
+    "description": "Discord Persisting Layer Component",
+    "homepage": "https://github.com/WickedYeti/Discord.Persist",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aymeric Assier",
+            "email": "aymeric.assier@gmail.com",
+            "homepage": "http://www.assier.fr",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Discord\\Persist\\": "/"
+        }
+    },
+    "require": {
+        "discord/box": "self.version"
+    }
+}

@@ -1,8 +1,8 @@
 {
-    "name": "discord/framework",
+    "name": "discord/web",
     "type": "library",
-    "description": "Experimental PHP5.6 Framework",
-    "homepage": "https://github.com/WickedYeti/Discord",
+    "description": "Discord Web Application Component",
+    "homepage": "https://github.com/WickedYeti/Discord.Web",
     "license": "MIT",
     "authors": [
         {
@@ -14,25 +14,16 @@
     ],
     "autoload": {
         "psr-4": {
-            "Discord\\": "/"
-        },
-        "files": [
-            "/Box/helpers.php",
-            "/Debug/helpers.php"
-        ]
+            "Discord\\Web\\": "/"
+        }
     },
-    "replace": {
-        "discord/box": "self.version",
-        "discord/debug": "self.version",
-        "discord/event": "self.version",
+    "require": {
         "discord/http": "self.version",
-        "discord/persist": "self.version",
+        "discord/event": "self.version",
         "discord/reflector": "self.version",
+        "discord/persist": "self.version",
         "discord/router": "self.version",
         "discord/view": "self.version",
         "discord/web": "self.version"
-    },
-    "require": {
-        "psr/log": "~1.0"
     }
 }

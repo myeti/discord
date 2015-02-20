@@ -2,7 +2,6 @@
 
 namespace Discord\View\Template;
 
-use Discord\View\Engine;
 use Discord\View\Viewable;
 
 abstract class Sandbox
