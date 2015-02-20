@@ -3,6 +3,7 @@
 namespace Discord\Web;
 
 use Discord\Router;
+use Discord\Reflector;
 
 class Api extends Kernel
 {
@@ -16,9 +17,10 @@ class Api extends Kernel
      *
      * @param array $routes
      */
-    public function __construct($views, array $routes = [])
+    public function __construct(array $routes = [])
     {
         $this->router = new Router\Urls($routes);
+        Reflector\Injector::store(Router\Urls::class, $this->router);
 
         $routing = new Plugin\Resolving($this->router);
         $jsoning = new Plugin\Jsoning;
