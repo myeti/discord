@@ -53,7 +53,7 @@ class Resolving
      * @param callable $callable
      * @param $params
      */
-    public function fire($event, callable $callable, &...$params)
+    public function inject($event, callable $callable, &...$params)
     {
         if(!$callable instanceof Reflector\Resource) {
             $callable = Reflector\Resolver::resolve($callable);
@@ -66,7 +66,7 @@ class Resolving
     /**
      * Handle request resolution
      *
-     * @event kernel.respond
+     * @event kernel.resolve
      *
      * @param Http\Request $request
      *
@@ -83,7 +83,7 @@ class Resolving
 
             // 404
             if(!$route) {
-                throw new Http\Exception(404);
+                throw new Http\Exception(404, 'Query "' . $request->url->query . '" not found.');
             }
 
             // resolve resource
@@ -104,7 +104,7 @@ class Resolving
         }
         // 403
         elseif(Persist\Auth::rank() < $request->resource->context['auth']) {
-            throw new Http\Exception(403);
+            throw new Http\Exception(403, 'Resource not allowed, need rank "' . $request->resource->context['auth'] . '"');
         }
 
         // inject dependencies

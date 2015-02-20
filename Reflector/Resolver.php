@@ -31,10 +31,10 @@ abstract class Resolver
     public static function resolve($input)
     {
         $types = [
-            'static::resolveStaticMethod',
-            'static::resolveClassMethod',
-            'static::resolveInvokeMethod',
-            'static::resolveFunction',
+            [static::class, 'resolveStaticMethod'],
+            [static::class, 'resolveClassMethod'],
+            [static::class, 'resolveInvokeMethod'],
+            [static::class, 'resolveFunction']
         ];
 
         $types = array_merge($types, static::$types);
@@ -122,7 +122,9 @@ abstract class Resolver
 
                 // create object
                 if(!is_object($action[0])) {
-                    $action[0] = Injector::get($action[0]);
+                    $action[0] = Injector::has($action[0])
+                        ? Injector::get($action[0])
+                        : $method->getDeclaringClass()->newInstance();
                 }
 
                 // create resource

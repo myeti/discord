@@ -103,6 +103,11 @@ abstract class Injector
      */
     public static function inject(Resource $resource)
     {
+        // no injection needed
+        if(!$resource->params) {
+            return $resource;
+        }
+
         // init ordered params
         $ordered = [];
 

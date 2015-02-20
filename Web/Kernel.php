@@ -34,9 +34,9 @@ class Kernel extends Event\Channel implements Http\Handler
     protected function setup()
     {
         // define event expectation
-        $this->expect('kernel.request', Http\Response::class);
-        $this->expect('kernel.error', Http\Response::class);
-        $this->expect('kernel.response', Http\Response::class, true);
+        $this->expect('kernel.resolve', Http\Response::class);
+        $this->expect('kernel.intercept', Http\Response::class);
+        $this->expect('kernel.respond', Http\Response::class, true);
 
         // delegated setup
         $this->fire('kernel.setup', $this);
@@ -83,21 +83,20 @@ class Kernel extends Event\Channel implements Http\Handler
             // intercept error and dispatch as event
             $response = $this->intercept($request, $e);
             if($response instanceof Http\Response) {
+                $returned = true;
                 return $this->finish($request, $response);
             }
         }
-        finally {
 
-            // create response
-            $response = $this->respond($request, $data);
+        // create response
+        $response = $this->respond($request, $data);
 
-            // invalid response
-            if(!is_callable($request->resource)) {
-                throw new Kernel\InvalidRequest;
-            }
-
-            return $this->finish($request, $response);
+        // invalid response
+        if(!$response instanceof Http\Response) {
+            throw new Kernel\InvalidResponse;
         }
+
+        return $this->finish($request, $response);
     }
 
 
@@ -113,7 +112,7 @@ class Kernel extends Event\Channel implements Http\Handler
      *
      * @throw \RuntimeException
      */
-    protected function resolve(Http\Request $request)
+    protected function resolve(Http\Request &$request)
     {
         // fire <kernel.resolve> event
         $response = $this->fire('kernel.resolve', $request);
@@ -123,7 +122,7 @@ class Kernel extends Event\Channel implements Http\Handler
 
         // check if resource is a valid callable
         if(!is_callable($request->resource)) {
-            throw new \RuntimeException('Request::resource must be a valid callable');
+            throw new Kernel\InvalidRequest('Request::resource must be a valid callable');
         }
     }
 
@@ -182,7 +181,7 @@ class Kernel extends Event\Channel implements Http\Handler
 
         // check if the response is valid
         if(!$response instanceof Http\Response) {
-            throw new \RuntimeException('Response must be a valid instance');
+            throw new Kernel\InvalidResponse('Response must be a valid instance');
         }
 
         return $response;
@@ -219,6 +218,28 @@ class Kernel extends Event\Channel implements Http\Handler
         $response = $this->handle($request);
 
         return $response->send();
+    }
+
+
+    /**
+     * Forward action on specific event
+     *
+     * @param int $code
+     * @param callable $resource
+     *
+     * @return $this
+     */
+    public function forward($event, $resource)
+    {
+        $this->on($event, function() use($resource)
+        {
+            $request = Http\Request::globals();
+            $request->resource = $resource;
+
+            return $this->handle($request);
+        });
+
+        return $this;
     }
 
 }

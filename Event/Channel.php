@@ -116,7 +116,7 @@ class Channel implements Subject
 
                 // execute before filter
                 if($event != '*') {
-                    $this->fire('*', $event, $callable, ...$param);
+                    $this->fire('*', $event, $callable, ...$params);
                 }
 
                 // execute listener
