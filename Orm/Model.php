@@ -17,13 +17,11 @@ trait Model
     /**
      * Get read scope
      *
-     * @param string $name
-     *
      * @return Mapper\Scope\Read
      */
-    public static function read($name)
+    public static function read()
     {
-        return Syn::read($name);
+        return Syn::read(static::class);
     }
 
 
@@ -36,9 +34,9 @@ trait Model
      *
      * @return static[]
      */
-    public static function find(array $where = [], $sort = null, $limit = null)
+    public static function all(array $where = [], $sort = null, $limit = null)
     {
-        return Syn::find(static::class, $where, $sort, $limit);
+        return Syn::all(static::class, $where, $sort, $limit);
     }
 
 
@@ -57,26 +55,22 @@ trait Model
     /**
      * Get create scope
      *
-     * @param string $name
-     *
      * @return Mapper\Scope\Create
      */
-    public static function create($name)
+    public static function create()
     {
-        return Syn::create($name);
+        return Syn::create(static::class);
     }
 
 
     /**
      * Get edit scope
      *
-     * @param string $name
-     *
      * @return Mapper\Scope\Edit
      */
-    public static function edit($name)
+    public static function edit()
     {
-        return Syn::edit($name);
+        return Syn::edit(static::class);
     }
 
 
@@ -96,13 +90,11 @@ trait Model
     /**
      * Get drop scope
      *
-     * @param string $name
-     *
      * @return Mapper\Scope\Read
      */
-    public static function drop($name)
+    public static function drop()
     {
-        return Syn::drop($name);
+        return Syn::drop(static::class);
     }
 
 
@@ -115,7 +107,7 @@ trait Model
      */
     public static function wipe($where)
     {
-        return Syn::drop(static::class, $where);
+        return Syn::wipe(static::class, $where);
     }
 
 
@@ -130,7 +122,7 @@ trait Model
      */
     protected function _many($entity, $foreign, $local = 'id')
     {
-        return Syn::find($entity, [$foreign => $this->{$local}]);
+        return Syn::all($entity, [$foreign => $this->{$local}]);
     }
 
 

@@ -44,6 +44,8 @@ abstract class Syn
      *
      * @param string $dbname
      * @param array $settings
+     *
+     * @return Mapper
      */
     public static function MySQL($dbname, array $settings = [])
     {
@@ -53,11 +55,13 @@ abstract class Syn
 
 
     /**
-     * SQLite driver connector
+     * SQLite driver constructor
      *
      * @param string $filename
+     *
+     * @return Mapper
      */
-    public static function __construct($filename)
+    public static function SQLite($filename)
     {
         $mapper = new SQLite($filename);
         return static::load($mapper);
@@ -129,7 +133,7 @@ abstract class Syn
      *
      * @return object[]
      */
-    public static function find($name, array $where = [], $sort = null, $limit = null)
+    public static function all($name, array $where = [], $sort = null, $limit = null)
     {
         $read = static::read($name);
 
@@ -168,6 +172,11 @@ abstract class Syn
     public static function one($name, $where = [])
     {
         $read = static::read($name);
+
+        // id
+        if(is_int($where) or is_string($where)) {
+            $where = ['id' => $where];
+        }
 
         foreach($where as $cond => $value) {
             $read->where($cond, $value);
