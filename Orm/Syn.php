@@ -1,13 +1,5 @@
 <?php
 
-/**
- * This file is part of the Discord package.
- *
- * Copyright Aymeric Assier <aymeric.assier@gmail.com>
- *
- * For the full copyright and license information, please view the Licence.txt
- * file that was distributed with this source code.
- */
 namespace Discord\Orm;
 
 abstract class Syn
@@ -17,25 +9,25 @@ abstract class Syn
     const MASTER = 'master';
     const SLAVE = 'slave';
 
-    /** @var Mapper[] */
-    protected static $mappers = [];
+    /** @var Manageable[] */
+    protected static $managers = [];
 
     /** @var int */
     protected static $use = self::MASTER;
 
 
     /**
-     * Plug custom mapper
+     * Plug custom manager
      *
-     * @param Mapper $mapper
+     * @param Manageable $manager
      * @param string $as
      *
-     * @return Mapper
+     * @return Manageable
      */
-    public static function load(Mapper $mapper, $as = self::MASTER)
+    public static function load(Manageable $manager, $as = self::MASTER)
     {
-        static::$mappers[$as] = $mapper;
-        return static::mapper();
+        static::$managers[$as] = $manager;
+        return static::manager();
     }
 
 
@@ -45,12 +37,12 @@ abstract class Syn
      * @param string $dbname
      * @param array $settings
      *
-     * @return Mapper
+     * @return Manager\MySQL
      */
     public static function MySQL($dbname, array $settings = [])
     {
-        $mapper = new MySQL($dbname, $settings);
-        return static::load($mapper);
+        $manager = new Manager\MySQL($dbname, $settings);
+        return static::load($manager);
     }
 
 
@@ -59,24 +51,24 @@ abstract class Syn
      *
      * @param string $filename
      *
-     * @return Mapper
+     * @return Manager\SQLite
      */
     public static function SQLite($filename)
     {
-        $mapper = new SQLite($filename);
-        return static::load($mapper);
+        $manager = new Manager\SQLite($filename);
+        return static::load($manager);
     }
 
 
     /**
-     * Get mapper
+     * Get manager
      *
      * @param string $as
      * @throws \LogicException
      *
-     * @return Mapper
+     * @return Manageable
      */
-    public static function mapper($as = null)
+    public static function manager($as = null)
     {
         // set db
         if($as) {
@@ -84,52 +76,88 @@ abstract class Syn
         }
 
         // no db
-        if(!isset(static::$mappers[static::$use])) {
-            throw new \LogicException('No mapper "' . static::$use . '" registered.');
+        if(!isset(static::$managers[static::$use])) {
+            throw new Error\UnknownManager('No manager "' . static::$use . '" loaded.');
         }
 
-        return static::$mappers[static::$use];
+        return static::$managers[static::$use];
     }
 
 
     /**
-     * Direct mapping to entity
+     * Register classes as entities
      *
      * @param array $classes
      *
-     * @return $this
+     * @return Manageable
      */
     public static function map(array $classes)
     {
         foreach($classes as $class) {
-            static::mapper()->map($class);
+            static::manager()->map($class);
         }
 
-        return static::mapper();
+        return static::manager();
     }
 
 
 
     /**
-     * Get read scope
+     * Start safe transaction
      *
-     * @param string $name
+     * @return bool
+     */
+    public static function transaction()
+    {
+        return static::manager()->transaction();
+    }
+
+
+
+    /**
+     * Commit changes
      *
-     * @return Mapper\Scope\Read
+     * @return bool
+     */
+    public static function commit()
+    {
+        return static::manager()->commit();
+    }
+
+
+
+    /**
+     * Rollback changes
+     *
+     * @return bool
+     */
+    public static function rollback($name)
+    {
+        return static::manager()->rollback($name);
+    }
+
+
+
+    /**
+     * Generate read scope
+     *
+     * @param string $name entity's name
+     *
+     * @return Persister\Read
      */
     public static function read($name)
     {
-        return static::mapper()->read($name);
+        return static::manager()->read($name);
     }
 
 
     /**
-     * Helper : Read entities
+     * Read all entities
      *
      * @param string $name
      * @param array $where
      * @param string $sort
-     * @param int $limit
+     * @param int|array $limit
      *
      * @return object[]
      */
@@ -162,7 +190,7 @@ abstract class Syn
 
 
     /**
-     * Helper : Read one entity
+     * Read one entity
      *
      * @param string $name
      * @param array $where
@@ -187,38 +215,38 @@ abstract class Syn
 
 
     /**
-     * Get create scope
+     * Generate create scope
      *
-     * @param string $name
+     * @param string $name entity's name
      *
-     * @return Mapper\Scope\Create
+     * @return Persister\Create
      */
     public static function create($name)
     {
-        return static::mapper()->create($name);
+        return static::manager()->create($name);
     }
 
 
     /**
-     * Get edit scope
+     * Generate Update scope
      *
-     * @param string $name
+     * @param string $name entity's name
      *
-     * @return Mapper\Scope\Edit
+     * @return Persister\Update
      */
-    public static function edit($name)
+    public static function update($name)
     {
-        return static::mapper()->edit($name);
+        return static::manager()->update($name);
     }
 
 
     /**
-     * Helper : Create or edit
+     * Create or update entity
      *
      * @param string $name
-     * @param object|array $data
+     * @param array|object $data
      *
-     * @return int|mixed
+     * @return object
      */
     public static function save($name, $data)
     {
@@ -243,22 +271,23 @@ abstract class Syn
 
 
     /**
-     * Get drop scope
+     * Generate delete scope
      *
-     * @param string $name
+     * @param string $name entity's name
      *
-     * @return Mapper\Scope\Read
+     * @return Persister\Delete
      */
-    public static function drop($name)
+    public static function delete($name)
     {
-        return static::mapper()->drop($name);
+        return static::manager()->delete($name);
     }
 
 
     /**
-     * Helper : Get drop scope
+     * Delete entity
      *
      * @param string $name
+     * @param int|array $where
      *
      * @return bool
      */
@@ -278,16 +307,16 @@ abstract class Syn
 
 
     /**
-     * Execute custom query
+     * Generate custom scope
      *
-     * @param string $sql
+     * @param string $query
      * @param array $values
      *
-     * @return array|mixed
+     * @return mixed
      */
-    public static function query($sql, array $values = [])
+    public static function query($query, array $values = [])
     {
-        return static::mapper()->query($sql, $values);
+        return static::manager()->query($query, $values);
     }
 
 }

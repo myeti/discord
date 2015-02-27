@@ -1,13 +1,5 @@
 <?php
 
-/**
- * This file is part of the Discord package.
- *
- * Copyright Aymeric Assier <aymeric.assier@gmail.com>
- *
- * For the full copyright and license information, please view the Licence.txt
- * file that was distributed with this source code.
- */
 namespace Discord\Orm;
 
 trait Model
@@ -15,9 +7,11 @@ trait Model
 
 
     /**
-     * Get read scope
+     * Generate read scope
      *
-     * @return Mapper\Scope\Read
+     * @param string $name entity's name
+     *
+     * @return Persister\Read
      */
     public static function read()
     {
@@ -26,11 +20,11 @@ trait Model
 
 
     /**
-     * Get many entities
+     * Read all entities
      *
      * @param array $where
-     * @param int $sort
-     * @param mixed $limit
+     * @param string $sort
+     * @param int|array $limit
      *
      * @return static[]
      */
@@ -41,21 +35,22 @@ trait Model
 
 
     /**
-     * Get one entity
+     * Read one entity
      *
-     * @param $where
+     * @param array $where
      *
      * @return static
      */
-    public static function one($where)
+    public static function one($where = [])
     {
         return Syn::one(static::class, $where);
     }
 
+
     /**
-     * Get create scope
+     * Generate create scope
      *
-     * @return Mapper\Scope\Create
+     * @return Persister\Create
      */
     public static function create()
     {
@@ -64,22 +59,22 @@ trait Model
 
 
     /**
-     * Get edit scope
+     * Create or update entity
      *
-     * @return Mapper\Scope\Edit
+     * @return object
      */
-    public static function edit()
+    public static function update()
     {
-        return Syn::edit(static::class);
+        return Syn::update(static::class);
     }
 
 
     /**
-     * Save entity
+     * Create or update entity
      *
-     * @param mixed $data
+     * @param array|object $data
      *
-     * @return int|bool
+     * @return object
      */
     public static function save($data)
     {
@@ -88,22 +83,22 @@ trait Model
 
 
     /**
-     * Get drop scope
+     * Generate delete scope
      *
-     * @return Mapper\Scope\Read
+     * @return Persister\Delete
      */
-    public static function drop()
+    public static function delete()
     {
         return Syn::drop(static::class);
     }
 
 
     /**
-     * Drop entity
+     * Delete entity
      *
-     * @param $where
+     * @param int|array $where
      *
-     * @return int
+     * @return bool
      */
     public static function wipe($where)
     {

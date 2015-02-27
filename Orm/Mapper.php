@@ -2,27 +2,31 @@
 
 namespace Discord\Orm;
 
-class Mapper
+class Mapper implements Mappable
 {
 
     /** @var \PDO */
-    protected $pdo;
+    public $pdo;
 
-    /** @var Mapper\Entity[] */
+    /** @var Mapper\Entity */
     protected $entities = [];
 
     /** @var array */
-    protected $models = [];
+    protected $classes = [];
 
 
     /**
-     * New mapper
+     * Setup mapper
      *
      * @param \PDO $pdo
+     * @param Mapper\Entity $entities
      */
-    public function __construct(\PDO $pdo)
+    public function __construct(\PDO $pdo, Mapper\Entity ...$entities)
     {
         $this->pdo = $pdo;
+        foreach($entities as $entity) {
+            $this->register($entity);
+        }
     }
 
 
@@ -33,11 +37,10 @@ class Mapper
      *
      * @return $this
      */
-    public function register(Mapper\Entity &$entity)
+    public function register(Mapper\Entity $entity)
     {
-        // has model
         if($entity->class) {
-            $this->models[$entity->class] = $entity->name;
+            $this->classes[$entity->class] = $entity->name;
         }
 
         $this->entities[$entity->name] = $entity;
@@ -47,18 +50,15 @@ class Mapper
 
 
     /**
-     * Direct mapping to entity
+     * Register class as entity
      *
-     * @param $class
+     * @param string $class
      *
      * @return $this
      */
     public function map($class)
     {
-        $entity = Mapper\Entity::of($class);
-        $this->register($entity);
-
-        return $this;
+        return $this->register(Mapper\Entity::of($class));
     }
 
 
@@ -68,108 +68,122 @@ class Mapper
      * @param string $name
      *
      * @return Mapper\Entity
-     * @throws Mapper\UnknownEntity
      */
     public function entity($name)
     {
-        // has model
-        if(isset($this->models[$name])) {
-            $name = $this->models[$name];
+        if(isset($this->classes[$name])) {
+            $name = $this->classes[$name];
         }
 
-        // entity does not exists
-        if(!isset($this->entities[$name])) {
-            throw new Mapper\UnknownEntity('Unknown entity "' . $name . '"');
+        if(isset($this->entities[$name])) {
+            return $this->entities[$name];
         }
 
-        return $this->entities[$name];
+        throw new Error\UnknownEntity($name);
     }
 
 
     /**
-     * Build entity structure into database
-     * @todo
+     * Start safe transaction
      *
      * @return bool
      */
-    public function build()
+    public function transaction()
     {
-
+        return $this->pdo->beginTransaction();
     }
 
 
     /**
-     * Get read scope
+     * Commit changes
      *
-     * @param string $name
-     *
-     * @return Mapper\Scope\Read
+     * @return bool
      */
-    public function read($name)
+    public function commit()
     {
-        $entity = $this->entity($name);
-
-        return new Mapper\Scope\Read($this->pdo, $entity);
+        return $this->pdo->commit();
     }
 
 
     /**
-     * Get create scope
+     * Rollback changes
      *
-     * @param string $name
+     * @return bool
+     */
+    public function rollback()
+    {
+        return $this->pdo->rollBack();
+    }
+
+
+    /**
+     * Generate create scope
      *
-     * @return Mapper\Scope\Read
+     * @param string $name entity's name
+     *
+     * @return Persister\Create
      */
     public function create($name)
     {
         $entity = $this->entity($name);
-
-        return new Mapper\Scope\Create($this->pdo, $entity);
+        return new Persister\Create($entity, $this->pdo);
     }
 
 
     /**
-     * Get edit scope
+     * Generate read scope
      *
-     * @param string $name
+     * @param string $name entity's name
      *
-     * @return Mapper\Scope\Read
+     * @return Persister\Read
      */
-    public function edit($name)
+    public function read($name)
     {
         $entity = $this->entity($name);
-
-        return new Mapper\Scope\Edit($this->pdo, $entity);
+        return new Persister\Read($entity, $this->pdo);
     }
 
 
     /**
-     * Get drop scope
+     * Generate Update scope
      *
-     * @param string $name
+     * @param string $name entity's name
      *
-     * @return Mapper\Scope\Read
+     * @return Persister\Update
      */
-    public function drop($name)
+    public function update($name)
     {
         $entity = $this->entity($name);
-
-        return new Mapper\Scope\Drop($this->pdo, $entity);
+        return new Persister\Update($entity, $this->pdo);
     }
 
 
     /**
-     * Execute custom query
+     * Generate delete scope
      *
-     * @param string $sql
+     * @param string $name entity's name
+     *
+     * @return Persister\Delete
+     */
+    public function delete($name)
+    {
+        $entity = $this->entity($name);
+        return new Persister\Delete($entity, $this->pdo);
+    }
+
+
+    /**
+     * Generate custom scope
+     *
+     * @param string $query
      * @param array $values
      *
-     * @return array|mixed
+     * @return object[]|int
      */
-    public function query($sql, array $values = [])
+    public function query($query, array $values = [])
     {
-        $raw = new Mapper\Scope\Raw($this->pdo, $sql, $values);
-        return $raw->apply();
+        $query = Persister\Query($this->pdo, $query, $values);
+        return $query->apply();
     }
 
 } 

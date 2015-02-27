@@ -16,6 +16,9 @@ class Entity
     /** @var string */
     public $class;
 
+    /** @var string */
+    public $id = 'id';
+
 
     /**
      * New entity
@@ -38,7 +41,10 @@ class Entity
             }
 
             // add field
-            $this->fields[$field] = Entity\Field::from($config);
+            $this->fields[$field] = Field::from($config);
+            if($field->primary) {
+                $this->id = $field;
+            }
         }
     }
 
@@ -53,15 +59,20 @@ class Entity
     public static function of($class)
     {
         // resolve name
-        $name = Annotations::ofClass($class, 'name');
+        $name = Annotations::ofClass($class, 'entity');
         if(!$name) {
-            $name = end(explode('\\', $class));
+            $namespace = explode('\\', $class);
+            $name = strtolower(end($namespace));
         }
 
         // scan properties
         $fields = [];
         foreach(get_class_vars($class) as $property => $default) {
             $meta = Annotations::ofProperty($class, $property);
+            if(isset($meta['id'])) {
+                $meta['primary'] = true;
+                unset($meta['id']);
+            }
             if(isset($meta['var'])) {
                 $meta['type'] = $meta['var'];
                 unset($meta['var']);
