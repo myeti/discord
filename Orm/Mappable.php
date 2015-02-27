@@ -27,6 +27,13 @@ interface Mappable
     public function map($class);
 
     /**
+     * Build database structure
+     *
+     * @return bool
+     */
+    public function build();
+
+    /**
      * Get registered entity
      *
      * @param string $name

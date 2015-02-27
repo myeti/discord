@@ -63,6 +63,17 @@ class Mapper implements Mappable
 
 
     /**
+     * Build database structure
+     *
+     * @return bool
+     */
+    public function build()
+    {
+        // @todo
+    }
+
+
+    /**
      * Get registered entity
      *
      * @param string $name
