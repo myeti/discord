@@ -1,0 +1,23 @@
+{
+    "name": "discord/event",
+    "type": "library",
+    "description": "Discord Event Manager Component",
+    "homepage": "https://github.com/WickedYeti/Discord.Debug",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aymeric Assier",
+            "email": "aymeric.assier@gmail.com",
+            "homepage": "http://www.assier.fr",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Discord\\Event\\": "/"
+        }
+    },
+    "require": {
+        "discord/reflector": "self.version"
+    }
+}
