@@ -1,0 +1,21 @@
+{
+    "name": "discord/box",
+    "type": "library",
+    "description": "Discord Toolbox Component",
+    "homepage": "https://github.com/WickedYeti/Discord.Box",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aymeric Assier",
+            "email": "aymeric.assier@gmail.com",
+            "homepage": "http://www.assier.fr",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Discord\\Box\\": "/"
+        },
+        "files": ["helpers.php"]
+    }
+}
