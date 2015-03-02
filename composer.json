@@ -1,7 +1,7 @@
 {
     "name": "discord/framework",
     "type": "library",
-    "description": "Experimental PHP5.6 Framework",
+    "description": "Non-frustrating Experimental PHP5.6 Framework",
     "homepage": "https://github.com/WickedYeti/Discord",
     "license": "MIT",
     "authors": [
