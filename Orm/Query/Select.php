@@ -2,14 +2,15 @@
 
 namespace Discord\Orm\Query;
 
-use Discord\Orm;
-
-class Select extends Orm\Query
+class Select implements Compilable
 {
 
     use Clause\Where;
     use Clause\Sort;
     use Clause\Limit;
+
+    /** @var string */
+    protected $table;
 
     /** @var array */
     protected $fields = [];

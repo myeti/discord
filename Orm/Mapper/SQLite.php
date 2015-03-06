@@ -1,10 +1,10 @@
 <?php
 
-namespace Discord\Orm\Manager;
+namespace Discord\Orm\Mapper;
 
-use Discord\Orm\Manager;
+use Discord\Orm\Mapper;
 
-class SQLite extends Manager
+class SQLite extends Mapper
 {
 
     /**

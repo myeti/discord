@@ -1,23 +1,22 @@
 <?php
 
-namespace Discord\Orm\Persister;
+namespace Discord\Orm\Persister\Composer;
 
-use Discord\Orm\Persister;
+use Discord\Orm\Persister\Composer;
 use Discord\Orm\Query;
 
-class Update extends Persister
+class Update extends Composer
 {
 
+
     /**
-     * Open scope
+     * Create inner compilable query
      *
-     * @param \PDO $pdo
-     * @param Mapper\Entity $entity
+     * @return Query\Select
      */
-    public function __construct(Mapper\Entity $entity, \PDO $pdo)
+    protected function createQuery()
     {
-        parent::__construct($entity, $pdo);
-        $this->sql = new Query\Update($entity->name);
+        return new Query\Update($this->entity->name);
     }
 
 
@@ -31,7 +30,7 @@ class Update extends Persister
      */
     public function where($expression, $value)
     {
-        $this->sql->where($expression, $value);
+        $this->query->where($expression, $value);
 
         return $this;
     }
@@ -47,7 +46,7 @@ class Update extends Persister
     public function with(array $data)
     {
         foreach($data as $key => $value) {
-            $this->sql->set($key, $value);
+            $this->query->set($key, $value);
         }
 
         return $this;
@@ -57,11 +56,11 @@ class Update extends Persister
     /**
      * Filter output result
      *
-     * @param PDOStatement $statement
+     * @param \PDOStatement $statement
      *
      * @return int
      */
-    protected function output($statement)
+    protected function output(\PDOStatement $statement)
     {
         return $statement->rowCount();
     }

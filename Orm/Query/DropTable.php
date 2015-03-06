@@ -2,11 +2,10 @@
 
 namespace Discord\Orm\Query;
 
-use Discord\Orm;
-
-class DropTable extends Orm\Query
+class DropTable implements Compilable
 {
 
+    use Clause\Table;
     use Clause\Where;
 
 

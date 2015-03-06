@@ -1,10 +1,10 @@
 <?php
 
-namespace Discord\Orm\Manager\SQLite;
+namespace Discord\Orm\Builder\SQlite\Query;
 
 use Discord\Orm\Query;
 
-class Create extends Query\Create
+class CreateTable extends Query\CreateTable
 {
 
     /** @var array */

@@ -1,23 +1,22 @@
 <?php
 
-namespace Discord\Orm\Persister;
+namespace Discord\Orm\Persister\Composer;
 
-use Discord\Orm\Persister;
+use Discord\Orm\Persister\Composer;
 use Discord\Orm\Query;
 
-class Read extends Persister
+class Read extends Composer
 {
 
+
     /**
-     * Open scope
+     * Create inner compilable query
      *
-     * @param \PDO $pdo
-     * @param Mapper\Entity $entity
+     * @return Query\Select
      */
-    public function __construct(Mapper\Entity $entity, \PDO $pdo)
+    protected function createQuery()
     {
-        parent::__construct($entity, $pdo);
-        $this->sql = new Query\Select($entity->name);
+        return new Query\Select($this->entity->name);
     }
 
 
@@ -30,7 +29,7 @@ class Read extends Persister
      */
     public function select(...$fields)
     {
-        $this->sql->select(...$fields);
+        $this->query->select(...$fields);
 
         return $this;
     }
@@ -46,7 +45,7 @@ class Read extends Persister
      */
     public function where($expression, $value)
     {
-        $this->sql->where($expression, $value);
+        $this->query->where($expression, $value);
 
         return $this;
     }
@@ -62,7 +61,7 @@ class Read extends Persister
      */
     public function sort($field, $sort = SORT_ASC)
     {
-        $this->sql->sort($field, $sort);
+        $this->query->sort($field, $sort);
 
         return $this;
     }
@@ -78,7 +77,7 @@ class Read extends Persister
      */
     public function limit($i, $step = 0)
     {
-        $this->sql->limit($i, $step);
+        $this->query->limit($i, $step);
 
         return $this;
     }
@@ -95,22 +94,6 @@ class Read extends Persister
         $list = $this->apply();
 
         return current($list);
-    }
-
-
-    /**
-     * Filter output result
-     *
-     * @param PDOStatement $statement
-     *
-     *  @return object[]
-     */
-    protected function output($statement)
-    {
-        // return models or objects
-        return ($this->entity->class)
-            ? $sth->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, $this->entity->class)
-            : $sth->fetchAll(\PDO::FETCH_OBJ);
     }
 
 }

@@ -2,11 +2,10 @@
 
 namespace Discord\Orm\Query;
 
-use Discord\Orm;
-
-class Delete extends Orm\Query
+class Delete implements Compilable
 {
 
+    use Clause\Table;
     use Clause\Where;
 
 

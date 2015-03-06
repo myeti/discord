@@ -2,10 +2,10 @@
 
 namespace Discord\Orm\Query;
 
-use Discord\Orm;
-
-class Truncate extends Orm\Query
+class Truncate implements Compilable
 {
+
+    use Clause\Table;
 
     /**
      * Compile SQL

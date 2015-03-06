@@ -6,18 +6,80 @@ interface Persistable
 {
 
     /**
-     * Setup persister using pdo and entitys
-     *
-     * @param Mapper\Entity $entity
-     * @param \PDO $pdo
+     * Get inner PDO instance
+     * @return \PDO
      */
-    public function __construct(Mapper\Entity $entity, \PDO $pdo)
+    public function pdo();
 
     /**
-     * Endpoint : apply persistance
+     * Register entity definition
      *
-     * @return mixed
+     * @param Persister\Entity $entity
+     *
+     * @return $this
      */
-    public function apply();
+    public function register(Persister\Entity $entity);
 
-} 
+    /**
+     * Map class to $entity
+     *
+     * @param string $class
+     *
+     * @return $this
+     */
+    public function map($class);
+
+    /**
+     * Retrieve entity definition
+     *
+     * @param string $entity
+     *
+     * @return Persister\Entity
+     * @throws \InvalidArgumentException
+     */
+    public function entity($entity);
+
+    /**
+     * Retrieve all entities definition
+     *
+     * @return Persister\Entity[]
+     */
+    public function entities();
+
+    /**
+     * Generate a create composer
+     *
+     * @param string $entity
+     *
+     * @return Persister\Composer\Create
+     */
+    public function create($entity);
+
+    /**
+     * Generate a read composer
+     *
+     * @param string $entity
+     *
+     * @return Persister\Composer\Read
+     */
+    public function read($entity);
+
+    /**
+     * Generate an update composer
+     *
+     * @param string $entity
+     *
+     * @return Persister\Composer\Update
+     */
+    public function update($entity);
+
+    /**
+     * Generate a delete composer
+     *
+     * @param string $entity
+     *
+     * @return Persister\Composer\Delete
+     */
+    public function delete($entity);
+
+}

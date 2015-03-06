@@ -1,23 +1,22 @@
 <?php
 
-namespace Discord\Orm\Persister;
+namespace Discord\Orm\Persister\Composer;
 
-use Discord\Orm\Persister;
+use Discord\Orm\Persister\Composer;
 use Discord\Orm\Query;
 
-class Delete extends Persister
+class Delete extends Composer
 {
 
+
     /**
-     * Open scope
+     * Create inner compilable query
      *
-     * @param \PDO $pdo
-     * @param Mapper\Entity $entity
+     * @return Query\Delete
      */
-    public function __construct(Mapper\Entity $entity, \PDO $pdo)
+    protected function createQuery()
     {
-        parent::__construct($entity, $pdo);
-        $this->sql = new Query\Delete($entity->name);
+        return new Query\Delete($this->entity->name);
     }
 
 
@@ -31,7 +30,7 @@ class Delete extends Persister
      */
     public function where($expression, $value)
     {
-        $this->sql->where($expression, $value);
+        $this->query->where($expression, $value);
 
         return $this;
     }
@@ -40,7 +39,7 @@ class Delete extends Persister
     /**
      * Filter output result
      *
-     * @param PDOStatement $statement
+     * @param \PDOStatement $statement
      *
      * @return int
      */

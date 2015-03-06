@@ -2,111 +2,49 @@
 
 namespace Discord\Orm;
 
-/**
- * Define CRUD methods used by the mapper
- */
-interface Mappable
+interface Mappable extends Persistable
 {
 
     /**
-     * Register entity
-     *
-     * @param Mapper\Entity $entity
-     *
-     * @return $this
-     */
-    public function register(Mapper\Entity $entity);
-
-    /**
-     * Register class as entity
-     *
-     * @param string $class
-     *
-     * @return $this
-     */
-    public function map($class);
-
-    /**
-     * Build database structure
-     *
-     * @return bool
-     */
-    public function build();
-
-    /**
-     * Get registered entity
+     * Read all entities
      *
      * @param string $name
+     * @param array $where
+     * @param string $sort
+     * @param int|array $limit
      *
-     * @return Mapper\Entity
+     * @return object[]
      */
-    public function entity($name);
+    public function all($name, array $where = [], $sort = null, $limit = null);
 
     /**
-     * Start safe transaction
+     * Read one entity
+     *
+     * @param string $name
+     * @param array $where
+     *
+     * @return object
+     */
+    public function one($name, $where = []);
+
+    /**
+     * Create or update entity
+     *
+     * @param string $name
+     * @param array|object $data
+     *
+     * @return object
+     */
+    public function save($name, $data);
+
+    /**
+     * Delete entity
+     *
+     * @param string $name
+     * @param int|array $where
      *
      * @return bool
      */
-    public function transaction();
+    public function wipe($name, $where);
 
-    /**
-     * Commit changes
-     *
-     * @return bool
-     */
-    public function commit();
-
-    /**
-     * Rollback changes
-     *
-     * @return bool
-     */
-    public function rollback();
-
-    /**
-     * Generate create scope
-     *
-     * @param string $name entity's name
-     *
-     * @return Persister\Create
-     */
-    public function create($name);
-
-    /**
-     * Generate read scope
-     *
-     * @param string $name entity's name
-     *
-     * @return Persister\Read
-     */
-    public function read($name);
-
-    /**
-     * Generate Update scope
-     *
-     * @param string $name entity's name
-     *
-     * @return Persister\Update
-     */
-    public function update($name);
-
-    /**
-     * Generate delete scope
-     *
-     * @param string $name entity's name
-     *
-     * @return Persister\Delete
-     */
-    public function delete($name);
-
-    /**
-     * Generate custom scope
-     *
-     * @param string $query
-     * @param array $values
-     *
-     * @return mixed
-     */
-    public function query($query, array $values = []);
-
-} 
+}

@@ -1,12 +1,12 @@
 <?php
 
-namespace Discord\Orm;
+namespace Discord\Orm\Query;
 
-interface Queryable
+interface Compilable
 {
 
     /**
-     * Compile SQL
+     * Compile query into SQL
      *
      * @return array [sql, values]
      */

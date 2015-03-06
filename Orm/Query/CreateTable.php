@@ -2,10 +2,10 @@
 
 namespace Discord\Orm\Query;
 
-use Discord\Orm;
-
-class CreateTable extends Orm\Query
+class CreateTable implements Compilable
 {
+
+    use Clause\Table;
 
     /** @var array */
     protected $fields = [];
@@ -13,7 +13,7 @@ class CreateTable extends Orm\Query
     /** @var array */
     protected $syntax = [
         'primary'       => 'PRIMARY KEY AUTO_INCREMENT',
-        'null'          => 'NOT NULL',
+        'not-null'      => 'NOT NULL',
         'default'       => 'DEFAULT',
     ];
 
@@ -37,12 +37,13 @@ class CreateTable extends Orm\Query
      * @param string $default
      * @return $this
      */
-    public function set($field, $type = 'string', $null = true, $default = null)
+    public function set($field, $type = 'string', $null = true, $default = null, $primary = false)
     {
         $this->fields[$field] = [
             'type' => $type,
             'null' => $null,
             'default' => $default,
+            'primary' => $primary
         ];
 
         return $this;
@@ -71,15 +72,15 @@ class CreateTable extends Orm\Query
             $sql .= "\n" .  '`' . $field . '` ' . $type;
 
             // primary
-            if($field === 'id') {
-                $opts['primary'] = true;
+            if($opts['primary'] == true) {
+                $opts['null'] = false;
                 $opts['default'] = null;
                 $sql .= ' ' . $this->syntax['primary'];
             }
 
             // null
             if(!$opts['null']) {
-                $sql .= ' ' . $this->syntax['null'];
+                $sql .= ' ' . $this->syntax['not-null'];
             }
 
             // default

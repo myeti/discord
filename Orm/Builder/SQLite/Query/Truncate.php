@@ -1,6 +1,6 @@
 <?php
 
-namespace Discord\Orm\Manager\SQLite;
+namespace Discord\Orm\Builder\SQlite\Query;
 
 use Discord\Orm\Query;
 

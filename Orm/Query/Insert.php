@@ -2,10 +2,11 @@
 
 namespace Discord\Orm\Query;
 
-use Discord\Orm;
-
-class Insert extends Orm\Query
+class Insert implements Compilable
 {
+
+    /** @var string */
+    protected $table;
 
     /** @var array */
     protected $data;

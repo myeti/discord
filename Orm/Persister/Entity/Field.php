@@ -1,6 +1,6 @@
 <?php
 
-namespace Discord\Orm\Mapper;
+namespace Discord\Orm\Persister\Entity;
 
 class Field
 {

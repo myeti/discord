@@ -5,20 +5,6 @@ namespace Discord\Orm;
 trait Model
 {
 
-
-    /**
-     * Generate read scope
-     *
-     * @param string $name entity's name
-     *
-     * @return Persister\Read
-     */
-    public static function read()
-    {
-        return Syn::read(static::class);
-    }
-
-
     /**
      * Read all entities
      *
@@ -48,28 +34,6 @@ trait Model
 
 
     /**
-     * Generate create scope
-     *
-     * @return Persister\Create
-     */
-    public static function create()
-    {
-        return Syn::create(static::class);
-    }
-
-
-    /**
-     * Create or update entity
-     *
-     * @return object
-     */
-    public static function update()
-    {
-        return Syn::update(static::class);
-    }
-
-
-    /**
      * Create or update entity
      *
      * @param array|object $data
@@ -83,17 +47,6 @@ trait Model
 
 
     /**
-     * Generate delete scope
-     *
-     * @return Persister\Delete
-     */
-    public static function delete()
-    {
-        return Syn::drop(static::class);
-    }
-
-
-    /**
      * Delete entity
      *
      * @param int|array $where
@@ -103,6 +56,50 @@ trait Model
     public static function wipe($where)
     {
         return Syn::wipe(static::class, $where);
+    }
+
+
+    /**
+     * Generate a create composer
+     *
+     * @return Persister\Composer\Create
+     */
+    public static function create()
+    {
+        return Syn::create(static::class);
+    }
+
+
+    /**
+     * Generate a read composer
+     *
+     * @return Persister\Composer\Read
+     */
+    public static function read()
+    {
+        return Syn::read(static::class);
+    }
+
+
+    /**
+     * Generate an update composer
+     *
+     * @return Persister\Composer\Update
+     */
+    public static function update()
+    {
+        return Syn::update(static::class);
+    }
+
+
+    /**
+     * Generate a delete composer
+     *
+     * @return Persister\Composer\Delete
+     */
+    public static function delete()
+    {
+        return Syn::delete(static::class);
     }
 
 

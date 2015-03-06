@@ -4,10 +4,13 @@ namespace Discord\Orm\Query;
 
 use Discord\Orm;
 
-class Update extends Orm\Query
+class Update implements Compilable
 {
 
     use Clause\Where;
+
+    /** @var string */
+    protected $table;
 
     /** @var array */
     protected $data;
