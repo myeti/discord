@@ -2,7 +2,7 @@
     "name": "discord/reflector",
     "type": "library",
     "description": "Discord Reflector Component",
-    "homepage": "https://github.com/WickedYeti/Discord.Reflector",
+    "homepage": "https://github.com/wickedyeti/discord-reflector",
     "license": "MIT",
     "authors": [
         {

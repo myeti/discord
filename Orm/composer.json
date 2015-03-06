@@ -1,8 +1,8 @@
 {
-    "name": "discord/http",
+    "name": "discord/orm",
     "type": "library",
-    "description": "Discord Http Core Component",
-    "homepage": "https://github.com/wickedyeti/discord-http",
+    "description": "Discord ORM Component",
+    "homepage": "https://github.com/wickedyeti/discord-orm",
     "license": "MIT",
     "authors": [
         {
@@ -14,7 +14,11 @@
     ],
     "autoload": {
         "psr-4": {
-            "Discord\\Http\\": "/"
+            "Discord\\Orm\\": "/"
         }
+    },
+
+    "require": {
+        "discord/reflector": "self.version"
     }
 }

@@ -2,7 +2,7 @@
     "name": "discord/event",
     "type": "library",
     "description": "Discord Event Manager Component",
-    "homepage": "https://github.com/WickedYeti/Discord.Debug",
+    "homepage": "https://github.com/wickedyeti/discord-event",
     "license": "MIT",
     "authors": [
         {

@@ -2,7 +2,7 @@
     "name": "discord/router",
     "type": "library",
     "description": "Discord Routing Component",
-    "homepage": "https://github.com/WickedYeti/Discord.Router",
+    "homepage": "https://github.com/wickedyeti/discord-router",
     "license": "MIT",
     "authors": [
         {

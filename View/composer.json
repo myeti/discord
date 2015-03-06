@@ -2,7 +2,7 @@
     "name": "discord/view",
     "type": "library",
     "description": "Discord Template Engine Component",
-    "homepage": "https://github.com/WickedYeti/Discord.View",
+    "homepage": "https://github.com/wickedyeti/discord-view",
     "license": "MIT",
     "authors": [
         {

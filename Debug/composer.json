@@ -2,7 +2,7 @@
     "name": "discord/debug",
     "type": "library",
     "description": "Discord Debug Component",
-    "homepage": "https://github.com/WickedYeti/Discord.Debug",
+    "homepage": "https://github.com/wickedyeti/discord-debug",
     "license": "MIT",
     "authors": [
         {

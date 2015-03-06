@@ -2,7 +2,7 @@
     "name": "discord/box",
     "type": "library",
     "description": "Discord Toolbox Component",
-    "homepage": "https://github.com/WickedYeti/Discord.Box",
+    "homepage": "https://github.com/wickedyeti/discord-box",
     "license": "MIT",
     "authors": [
         {

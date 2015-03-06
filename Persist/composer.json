@@ -2,7 +2,7 @@
     "name": "discord/persist",
     "type": "library",
     "description": "Discord Persisting Layer Component",
-    "homepage": "https://github.com/WickedYeti/Discord.Persist",
+    "homepage": "https://github.com/wickedyeti/discord-persist",
     "license": "MIT",
     "authors": [
         {

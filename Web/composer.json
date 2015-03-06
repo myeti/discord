@@ -2,7 +2,7 @@
     "name": "discord/web",
     "type": "library",
     "description": "Discord Web Application Component",
-    "homepage": "https://github.com/WickedYeti/Discord.Web",
+    "homepage": "https://github.com/wickedyeti/discord-web",
     "license": "MIT",
     "authors": [
         {
