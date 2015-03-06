@@ -1,3 +1,3 @@
 #Discord
 
-Experimental framework
+Experimental PHP 5.6 framework
