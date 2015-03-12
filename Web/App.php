@@ -3,6 +3,7 @@
 namespace Discord\Web;
 
 use Discord\View;
+use Discord\Http;
 use Discord\Router;
 
 class App extends Kernel
@@ -23,7 +24,7 @@ class App extends Kernel
     public function __construct($views, array $routes = [])
     {
         $this->router = new Router\Urls($routes);
-        $this->html = new View\Html($views);
+        $this->html = new View\Html($views, Http\Mog::url()->base);
 
         $routing = new Plugin\Resolving($this->router);
         $rendering = new Plugin\Rendering($this->html);

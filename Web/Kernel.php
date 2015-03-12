@@ -83,7 +83,6 @@ class Kernel extends Event\Channel implements Http\Handler
             // intercept error and dispatch as event
             $response = $this->intercept($request, $e);
             if($response instanceof Http\Response) {
-                $returned = true;
                 return $this->finish($request, $response);
             }
         }

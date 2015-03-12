@@ -33,7 +33,7 @@ class Entity
         $this->class = $class;
 
         // parse fields
-        foreach($this->fields as $field => $config) {
+        foreach($fields as $field => $config) {
 
             // direct type
             if(!is_array($config)) {
@@ -41,8 +41,8 @@ class Entity
             }
 
             // add field
-            $this->fields[$field] = Field::from($config);
-            if($field->primary) {
+            $this->fields[$field] = Entity\Field::from($config);
+            if($this->fields[$field]->primary) {
                 $this->id = $field;
             }
         }
@@ -69,17 +69,18 @@ class Entity
         $fields = [];
         foreach(get_class_vars($class) as $property => $default) {
             $meta = Annotations::ofProperty($class, $property);
-            if(isset($meta['id'])) {
+            if(array_key_exists('id', $meta)) {
                 $meta['primary'] = true;
                 unset($meta['id']);
             }
-            if(isset($meta['var'])) {
+            if(array_key_exists('var', $meta)) {
                 $meta['type'] = $meta['var'];
                 unset($meta['var']);
             }
             if($default != null and is_scalar($default)) {
                 $meta['default'] = $default;
             }
+            $meta['name'] = $property;
             $fields[$property] = $meta;
         }
 

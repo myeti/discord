@@ -27,7 +27,7 @@ class Rendering
     /**
      * Handle response rendering
      *
-     * @event kernel.response
+     * @event kernel.respond
      *
      * @param Http\Request $request
      * @param $data
@@ -39,7 +39,7 @@ class Rendering
         // view response no compiled
         if(!empty($request->resource->context['render'])) {
             $template = $request->resource->context['render'];
-            $content = $this->engine->render($template, $data);
+            $content = $this->engine->render($template, (array)$data);
 
             return new Http\Response($content);
         }

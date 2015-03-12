@@ -19,12 +19,13 @@ class KeyValueParser implements Parser
     public function parse($string)
     {
         // parse @key value
-        preg_match_all('#@([a-zA-Z]+)(.*)#', $string, $out, PREG_SET_ORDER);
+        preg_match_all('#@([a-zA-Z]+)(.*)(\*/|\n)#', $string, $out, PREG_SET_ORDER);
 
         // compile data
         $annotations = [];
         foreach($out as $row) {
-            $annotations[$row[1]] = $this->resolveValue($row[2]);
+            $key = trim($row[1]);
+            $annotations[$key] = $this->resolveValue($row[2]);
         }
 
         return $annotations;

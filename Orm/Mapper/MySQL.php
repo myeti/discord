@@ -3,6 +3,7 @@
 namespace Discord\Orm\Mapper;
 
 use Discord\Orm\Mapper;
+use Discord\Orm\Persister;
 
 class MySQL extends Mapper
 {
@@ -26,9 +27,9 @@ class MySQL extends Mapper
         // create pdo instance
         $connector = 'mysql:host=' . $settings['host'] . ';dbname=' . $dbname;
         $pdo = new \PDO($connector, $settings['username'], $settings['password']);
+        $persister = new Persister($pdo);
 
-        // init db
-        parent::__construct($pdo);
+        parent::__construct($persister);
     }
 
 } 

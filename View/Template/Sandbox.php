@@ -37,7 +37,7 @@ abstract class Sandbox
      *
      * @throws TemplateNotFound
      */
-    public function __construct(Viewable $engine, $template, array $helpers = [])
+    public function __construct(Viewable $engine, $template, array $sections = [], array $helpers = [])
     {
         // error
         if(!file_exists($template)) {
@@ -47,6 +47,7 @@ abstract class Sandbox
         $this->engine = $engine;
         $this->template = $template;
         $this->helpers = $helpers;
+        $this->sections = $sections;
     }
 
 
@@ -145,11 +146,10 @@ abstract class Sandbox
      * Compile template
      *
      * @param array $vars
-     * @param array $sections
      *
      * @return string
      */
-    public function compile(array $vars = [], array $sections = [])
+    public function compile(array $vars = [])
     {
         // start rendering
         if($this->rendering) {
@@ -171,7 +171,7 @@ abstract class Sandbox
         if($this->layout) {
             list($layout, $data) = $this->layout;
             $vars = array_merge($vars, $data);
-            $sections = array_merge($sections, $this->sections, ['__content__' => $content]);
+            $sections = array_merge($this->sections, ['__content__' => $content]);
             $content = $this->engine->render($layout, $vars, $sections);
         }
 

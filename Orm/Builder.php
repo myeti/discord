@@ -48,13 +48,13 @@ class Builder implements Buildable
         list($sql) = $query->compile();
 
         // prepare statement & execute
-        if($this->persister->pdo()->exec($sql)) {
+        if($this->persister->pdo()->exec($sql) !== false) {
             return true;
         }
 
         // error
         $error = $this->persister->pdo()->errorInfo();
-        throw new \PDOException('[' . $error[0] . '] ' . $error[2], $error[0]);
+        throw new \PDOException('[' . $error[0] . '] ' . $error[2]);
     }
 
 

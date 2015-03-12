@@ -3,6 +3,7 @@
 namespace Discord\Orm\Mapper;
 
 use Discord\Orm\Mapper;
+use Discord\Orm\Persister;
 
 class SQLite extends Mapper
 {
@@ -16,7 +17,9 @@ class SQLite extends Mapper
     {
         // create pdo instance
         $pdo = new \PDO('sqlite:' . $filename);
-        parent::__construct($pdo);
+        $persister = new Persister($pdo);
+
+        parent::__construct($persister);
     }
 
 } 

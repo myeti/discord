@@ -71,7 +71,8 @@ class Persister implements Persistable
      */
     public function map($class)
     {
-        return $this->register(Persister\Entity::of($class));
+        $entity = Persister\Entity::of($class);
+        return $this->register($entity);
     }
 
 

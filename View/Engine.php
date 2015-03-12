@@ -85,8 +85,8 @@ class Engine implements Viewable
         $vars = array_merge($this->vars, $vars);
 
         // create template & compile
-        $template = new Template($this, $template, $this->helpers);
-        $content = $template->compile($vars, $sections);
+        $sandbox = new Template($this, $template, $sections, $this->helpers);
+        $content = $sandbox->compile($vars);
 
         return $content;
     }

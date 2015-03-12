@@ -10,7 +10,7 @@ class CreateTable extends Query\CreateTable
     /** @var array */
     protected $syntax = [
         'primary'       => 'PRIMARY KEY AUTOINCREMENT',
-        'null'          => 'NOT NULL',
+        'not-null'      => 'NOT NULL',
         'default'       => 'DEFAULT',
     ];
 
