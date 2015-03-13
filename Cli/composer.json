@@ -1,8 +1,8 @@
 {
-    "name": "discord/persist",
+    "name": "discord/cli",
     "type": "library",
-    "description": "Discord Persisting Layer Component",
-    "homepage": "https://github.com/wickedyeti/discord-persist",
+    "description": "Discord Console Component",
+    "homepage": "https://github.com/wickedyeti/discord-cli",
     "license": "MIT",
     "authors": [
         {
@@ -14,11 +14,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Discord\\Persist\\": "/"
-        },
-        "files": ["helpers.php"]
-    },
-    "require": {
-        "discord/box": "self.version"
+            "Discord\\Cli\\": "/"
+        }
     }
 }

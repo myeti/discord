@@ -1,67 +1,10 @@
 <?php
 
-/************************************************
- * TEXT
- */
-
-
-/**
- * Alias of Lang::translate()
- * @param  string $text
- * @param  array $vars
- * @return string
- */
-function __($text, array $vars = [])
-{
-    return Discord\Box\Lang::translate($text, $vars);
-}
-
-
-/**
- * Alias of String::compose()
- * @param $string
- * @param array $vars
- * @return mixed
- */
-function str_compose($string, array $vars = [])
-{
-    return Discord\Box\String::compose($string, $vars);
-}
-
-
-/**
- * Alias of Regex::match()
- * @param string $string
- * @param string $pattern
- * @return bool
- */
-function str_match($string, $pattern)
-{
-    return Discord\Box\Regex::match($string, $pattern);
-}
-
-
-/**
- * Alias of Regex::wildcard()
- * @param string $string
- * @param string $pattern
- * @return bool
- */
-function str_is($string, $pattern)
-{
-    return Discord\Box\Regex::wildcard($string, $pattern);
-}
-
-
-
-/************************************************
- * ARRAY
- */
-
-
 /**
  * Check if input is traversable
+ *
  * @param $input
+ *
  * @return bool
  */
 function is_traversable($input)
@@ -72,7 +15,9 @@ function is_traversable($input)
 
 /**
  * Check if input is a collection
+ *
  * @param $input
+ *
  * @return bool
  */
 function is_collection($input)
@@ -83,8 +28,10 @@ function is_collection($input)
 
 /**
  * Check if key exists
+ *
  * @param array $array
  * @param string $key
+ *
  * @return bool
  */
 function array_has(array $array, $key)
@@ -95,8 +42,10 @@ function array_has(array $array, $key)
 
 /**
  * Silent get
+ *
  * @param array $array
  * @param string $key
+ *
  * @return null|mixed
  */
 function array_get(array $array, $key)
@@ -107,7 +56,9 @@ function array_get(array $array, $key)
 
 /**
  * Get first element
+ *
  * @param array $array
+ *
  * @return mixed
  */
 function array_first(array $array)
@@ -118,7 +69,9 @@ function array_first(array $array)
 
 /**
  * Get first key
+ *
  * @param array $array
+ *
  * @return string
  */
 function array_first_key(array $array)
@@ -130,7 +83,9 @@ function array_first_key(array $array)
 
 /**
  * Get last element
+ *
  * @param array $array
+ *
  * @return mixed
  */
 function array_last(array $array)
@@ -141,7 +96,9 @@ function array_last(array $array)
 
 /**
  * Get last key
+ *
  * @param array $array
+ *
  * @return string
  */
 function array_last_key(array $array)
@@ -153,8 +110,10 @@ function array_last_key(array $array)
 
 /**
  * Find first key of matched value
+ *
  * @param array $array
  * @param mixed $value
+ *
  * @return int
  */
 function array_key(array $array, $value)
@@ -164,10 +123,31 @@ function array_key(array $array, $value)
 
 
 /**
+ * Filter only string keys
+ *
+ * @param array $array
+ *
+ * @return array
+ */
+function array_string_keys(array $array)
+{
+    foreach($array as $key => $value) {
+        if(is_int($key)) {
+            unset($array[$key]);
+        }
+    }
+
+    return $array;
+}
+
+
+/**
  * Replace all value
+ *
  * @param array $array
  * @param mixed $value
  * @param mixed $replacement
+ *
  * @return array
  */
 function array_replace_value(array $array, $value, $replacement)
@@ -183,9 +163,11 @@ function array_replace_value(array $array, $value, $replacement)
 
 /**
  * Replace key and keep order
+ *
  * @param array $array
  * @param mixed $key
  * @param mixed $replacement
+ *
  * @return array|bool
  */
 function array_replace_key(array $array, $key, $replacement)
@@ -207,8 +189,10 @@ function array_replace_key(array $array, $key, $replacement)
 
 /**
  * Remove rows with specified value
+ *
  * @param array $array
  * @param mixed $value
+ *
  * @return array
  */
 function array_drop(array $array, $value)
@@ -220,9 +204,11 @@ function array_drop(array $array, $value)
 
 /**
  * Insert element at specific position
+ *
  * @param array $array
  * @param mixed $value
  * @param string $at
+ *
  * @return array
  */
 function array_insert(array $array, $value, $at)
@@ -236,8 +222,10 @@ function array_insert(array $array, $value, $at)
 
 /**
  * Filter keys
+ *
  * @param array $array
  * @param callable $callback
+ *
  * @return array
  */
 function array_filter_key(array $array, callable $callback)
@@ -249,8 +237,10 @@ function array_filter_key(array $array, callable $callback)
 
 /**
  * Get random element(s)
+ *
  * @param array $array
  * @param int $num
+ *
  * @return mixed|array
  */
 function array_random(array $array, $num = 1)
@@ -266,8 +256,10 @@ function array_random(array $array, $num = 1)
  * Sort array by columns
  * - [column => SORT_ASC] let you decide
  * - [column1, column2] will sort ASC
+ *
  * @param array $array
  * @param array $by
+ *
  * @return array
  */
 function array_sort(array $array, array $by)
@@ -304,4 +296,149 @@ function array_sort(array $array, array $by)
     $args[] = $array;
 
     return array_multisort(...$args);
+}
+
+
+/**
+ * Check is key exists in array
+ *
+ * @param array $array
+ * @param string $key
+ * @param string $separator
+ *
+ * @return bool
+ */
+function array_dot_has(array $array, $key, $separator = '.')
+{
+    $keys = explode($separator, $key);
+    foreach($keys as $key) {
+        if(!isset($array[$key])) {
+            return false;
+        }
+        $array = $array[$key];
+    }
+
+    return true;
+}
+
+
+/**
+ * Get value from array
+ *
+ * @param array $array
+ * @param string $key
+ * @param string $separator
+ *
+ * @return mixed
+ */
+function array_dot_get(array $array, $key, $separator = '.')
+{
+    $keys = explode($separator, $key);
+    foreach($keys as $key) {
+        if(!isset($array[$key])) {
+            return null;
+        }
+        $array = $array[$key];
+    }
+
+    return $array;
+}
+
+
+/**
+ * Pop value from sub-array
+ *
+ * @param array $array
+ * @param string $key
+ * @param string $separator
+ *
+ * @return mixed
+ */
+function array_dot_pop(array $array, $key, $separator = '.')
+{
+    $keys = explode($separator, $key);
+    foreach($keys as $key) {
+        if(!isset($array[$key])) {
+            return null;
+        }
+        $array = $array[$key];
+    }
+
+    if(!is_array($array)) {
+        return null;
+    }
+
+    return array_pop($array);
+}
+
+
+/**
+ * Set value in array
+ *
+ * @param array $array
+ * @param string $key
+ * @param $value
+ * @param string $separator
+ */
+function array_dot_set(array &$array, $key, $value, $separator = '.')
+{
+    $keys = explode($separator, $key);
+    foreach($keys as $key) {
+        if(!isset($array[$key])) {
+            $array[$key] = [];
+        }
+        $array = &$array[$key];
+    }
+
+    $array = $value;
+}
+
+
+/**
+ * Push value in sub-array
+ *
+ * @param array $array
+ * @param string $key
+ * @param $value
+ * @param string $separator
+ */
+function array_dot_push(array &$array, $key, $value, $separator = '.')
+{
+    $keys = explode($separator, $key);
+    foreach($keys as $key) {
+        if(!isset($array[$key])) {
+            $array[$key] = [];
+        }
+        $array = &$array[$key];
+    }
+
+    if(!is_array($array)) {
+        $array = [];
+    }
+
+    array_push($array, $value);
+}
+
+
+/**
+ * Delete key in array
+ *
+ * @param array $array
+ * @param string $key
+ * @param string $separator
+ */
+function array_dot_drop(array &$array, $key, $separator = '.')
+{
+    $keys = explode($separator, $key);
+    $last = array_pop($keys);
+    foreach($keys as $key) {
+        if(!isset($array[$key])) {
+            return true;
+        }
+        $array = &$array[$key];
+    }
+
+    if(isset($array[$last])) {
+        unset($array[$last]);
+    }
 }

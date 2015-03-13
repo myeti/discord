@@ -16,6 +16,10 @@
         "psr-4": {
             "Discord\\Box\\": "/"
         },
-        "files": ["helpers.php"]
+        "files": [
+            "helpers/arrays.php",
+            "helpers/filters.php",
+            "helpers/strings.php"
+        ]
     }
 }

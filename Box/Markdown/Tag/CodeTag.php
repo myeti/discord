@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the Craft package.
+ * This file is part of the Discord package.
  *
  * Copyright Aymeric Assier <aymeric.assier@gmail.com>
  *
