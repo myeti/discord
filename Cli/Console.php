@@ -31,9 +31,16 @@ class Console
      *
      * @return bool
      */
-    public function run($input)
+    public function run($input = null)
     {
-        $argv = explode(' ', $input);
+        if($input) {
+            $argv = explode(' ', $input);
+        }
+        else {
+            $argv = $_SERVER['argv'];
+            array_shift($argv);
+        }
+
         $name = array_shift($argv);
 
         if(!isset($this->commands[$name])) {
@@ -142,7 +149,10 @@ class Console
             throw new \RuntimeException('unknown parameter "', $name, '"');
         }
 
-        return [$args, $options];
+        return [
+            (object)$args,
+            (object)$options
+        ];
     }
 
 } 
