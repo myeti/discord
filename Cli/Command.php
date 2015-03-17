@@ -14,6 +14,9 @@ abstract class Command
 {
 
     /** @var string */
+    public $name;
+
+    /** @var string */
     public $description;
 
     /** @var Command\Argument[] */

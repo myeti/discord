@@ -22,7 +22,7 @@ class Listing extends  Cli\Command
      * register commands
      * @param array $commands
      */
-    public function __construct(array $commands)
+    public function __construct(Cli\Command ...$commands)
     {
         $this->commands = $commands;
     }
@@ -43,15 +43,15 @@ class Listing extends  Cli\Command
         }
         else {
             Cli\Dialog::say('registered commands :');
-            foreach($this->commands as $name => $command) {
+            foreach($this->commands as $command) {
 
                 // display line
-                $offset = 15 - strlen($name);
+                $offset = 15 - strlen($command->name);
                 if($offset <= 4) {
                     $offset = 4;
                 }
 
-                Cli\Dialog::say('- ' . $name . str_repeat(' ', $offset) . $command->description);
+                Cli\Dialog::say('- ' . $command->name . str_repeat(' ', $offset) . $command->description);
             }
         }
 

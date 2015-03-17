@@ -21,10 +21,10 @@ class Console
      *
      * @param array $commands
      */
-    public function __construct(array $commands = [])
+    public function __construct(Command ... $commands)
     {
-        foreach($commands as $name => $command) {
-            $this->commands[$name] = $command;
+        foreach($commands as $command) {
+            $this->commands[$command->name] = $command;
         }
 
         $this->commands[null] = new Preset\Listing($this->commands);
