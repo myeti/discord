@@ -1,8 +1,14 @@
 <?php
 
+/**
+ * This file is part of the Discord package.
+ *
+ * Copyright Aymeric Assier <aymeric.assier@gmail.com>
+ *
+ * For the full copyright and license information, please view the `licence`
+ * file that was distributed with this source code.
+ */
 namespace Discord\Box\Lang;
-
-use Discord\Box\String;
 
 class Indexer implements IndexerInterface
 {
@@ -83,7 +89,7 @@ class Indexer implements IndexerInterface
         }
 
         // compile string
-        $text = String::compose($text, $vars);
+        $text = str_compose($text, $vars);
 
         return $text;
     }

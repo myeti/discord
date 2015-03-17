@@ -1,8 +1,13 @@
 <?php
-
+/**
+ * This file is part of the Discord package.
+ *
+ * Copyright Aymeric Assier <aymeric.assier@gmail.com>
+ *
+ * For the full copyright and license information, please view the `licence`
+ * file that was distributed with this source code.
+ */
 namespace Discord\Persist\Session;
-
-use Discord\Box\Dot;
 
 class Native implements Provider
 {
@@ -54,7 +59,7 @@ class Native implements Provider
      */
     public function has($key)
     {
-        return Dot::has($this->data, $key);
+        return array_dot_has($this->data, $key);
     }
 
 
@@ -70,7 +75,7 @@ class Native implements Provider
         if($this->has($key)) {
 
             // get stored value
-            $value = Dot::get($this->data, $key);
+            $value = array_dot_get($this->data, $key);
 
             // unserialize non-scalar value
             $unserialized = @unserialize($value);
@@ -98,7 +103,7 @@ class Native implements Provider
             $value = serialize($value);
         }
 
-        Dot::set($this->data, $key, $value);
+        array_dot_set($this->data, $key, $value);
 
         return $this;
     }
@@ -114,7 +119,7 @@ class Native implements Provider
     public function drop($key)
     {
         if($this->has($key)) {
-            Dot::drop($this->data, $key);
+            array_dot_drop($this->data, $key);
         }
 
         return $this;

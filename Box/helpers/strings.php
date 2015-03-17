@@ -1,4 +1,13 @@
 <?php
+/**
+ * This file is part of the Discord package.
+ *
+ * Copyright Aymeric Assier <aymeric.assier@gmail.com>
+ *
+ * For the full copyright and license information, please view the `licence`
+ * file that was distributed with this source code.
+ */
+
 
 const STR_LEFT = 0;
 const STR_RIGHT = 1;

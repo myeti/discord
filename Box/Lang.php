@@ -5,7 +5,7 @@
  *
  * Copyright Aymeric Assier <aymeric.assier@gmail.com>
  *
- * For the full copyright and license information, please view the Licence.txt
+ * For the full copyright and license information, please view the `licence`
  * file that was distributed with this source code.
  */
 namespace Discord\Box;
